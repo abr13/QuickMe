@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             sentToStart();
         } else if (item.getItemId() == R.id.main_accsetting_btn) {
             //account settings
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.main_allusers_btn) {
             //all users
         }
