@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "277838704780",
+    "firebase_url": "https://quickme-bbb8c.firebaseio.com",
+    "project_id": "quickme-bbb8c",
+    "storage_bucket": "quickme-bbb8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277838704780:android:3d2ff8e20b588a4f",
+        "android_client_info": {
+          "package_name": "com.abr.quickme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277838704780-5itu4522r5hmcfaiuencel1tkam8glip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abr.quickme",
+            "certificate_hash": "5b1720440ae665d2de17d63c08c8ead66574dff3"
+          }
+        },
+        {
+          "client_id": "277838704780-8rqle0ldvqhf83oafbhbi86pqsjjf79e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt8drvMdSqt9mdBSky8apAhY7jo_TMuGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277838704780-8rqle0ldvqhf83oafbhbi86pqsjjf79e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
