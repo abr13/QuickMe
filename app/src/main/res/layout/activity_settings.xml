@@ -21,9 +21,9 @@
         android:layout_marginStart="120dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="120dp"
-        android:src="@drawable/profile"
-        app:civ_border_color="#E91E63"
         android:padding="2dp"
+        android:src="@drawable/profile_sample"
+        app:civ_border_color="#E91E63"
         app:civ_border_width="3dp" />
 
     <TextView
@@ -34,11 +34,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="302dp"
         android:layout_marginBottom="19dp"
-        android:text="Display Name"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Display Name" />
 
     <TextView
         android:id="@+id/settings_Status"
@@ -50,12 +50,13 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="340dp"
         android:layout_marginEnd="100dp"
-        android:text="It's Quick Messaging!"
         android:textAlignment="center"
         android:textColor="@android:color/primary_text_light"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        tools:text="It's Quick Messaging!" />
 
     <Button
+        android:id="@+id/btn_changeImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
