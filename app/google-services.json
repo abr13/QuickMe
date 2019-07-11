@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "277838704780-5itu4522r5hmcfaiuencel1tkam8glip.apps.googleusercontent.com",
+          "client_id": "277838704780-8rb276erlq8gj39e9qdmmtufg5le4773.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.abr.quickme",
@@ -36,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "277838704780-8rqle0ldvqhf83oafbhbi86pqsjjf79e.apps.googleusercontent.com",
+              "client_id": "277838704780-6nlcn35gkunul4asn3jjsphejufkpq8c.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

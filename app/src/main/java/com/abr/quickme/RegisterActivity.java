@@ -1,7 +1,9 @@
 package com.abr.quickme;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,6 +18,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -23,6 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     Button btn_register;
     TextInputLayout textName, textEmail, textPassword;
+    private DatabaseReference mDatabase;
+    private ProgressDialog mRegProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        mRegProgress = new ProgressDialog(this);
         mToolbar = findViewById(R.id.register_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Create An Account");
@@ -47,13 +56,20 @@ public class RegisterActivity extends AppCompatActivity {
                 String name = textName.getEditText().getText().toString();
                 String email = textEmail.getEditText().getText().toString();
                 String password = textPassword.getEditText().getText().toString();
-                register_user(email, password);
+
+                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
+                    mRegProgress.setTitle("Registering User");
+                    mRegProgress.setMessage("Please wait while we prepare a cup of coffee for you " + name + " !");
+                    mRegProgress.setCanceledOnTouchOutside(false);
+                    mRegProgress.show();
+                    register_user(name, email, password);
+                }
             }
         });
 
     }
 
-    private void register_user(String email, String password) {
+    private void register_user(final String name, String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -61,12 +77,31 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(mainIntent);
-                            finish();
+                            String uid = user.getUid();
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+
+                            HashMap<String, String> userMap = new HashMap<>();
+                            userMap.put("name", name);
+                            userMap.put("status", "It's Quick Messaging!");
+                            userMap.put("image", "default");
+                            userMap.put("thumb_image", "default");
+
+                            mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        mRegProgress.dismiss();
+                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(mainIntent);
+                                        finish();
+                                    }
+                                }
+                            });
+
                         } else {
                             // If sign in fails, display a message to the user.
+                            mRegProgress.hide();
                             Toast.makeText(RegisterActivity.this, "Error Creating Account", Toast.LENGTH_SHORT).show();
                         }
 
