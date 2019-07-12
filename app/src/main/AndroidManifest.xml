@@ -13,9 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ProfileActivity"></activity>
+        <activity
+            android:name=".UsersActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".StatusSettingsActivity"
-            android:parentActivityName=".SettingsActivity"></activity>
+            android:parentActivityName=".SettingsActivity" />
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity" />

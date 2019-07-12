@@ -66,7 +66,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void register_user(final String name, String email, String password) {

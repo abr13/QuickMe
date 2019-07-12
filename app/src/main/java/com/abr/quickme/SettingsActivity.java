@@ -2,8 +2,10 @@ package com.abr.quickme;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,7 +33,14 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -46,8 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView mName, mStatus;
     private StorageReference mStorageRef, mImageStorage;
     private Button btn_statusSettings, btn_changeImage;
-    private String ImgURL;
-    private Uri filePath;
+    private String ImgURL, ThumbURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
                 CropImage.activity()
                         .setAspectRatio(1, 1)
                         .setGuidelines(CropImageView.Guidelines.ON)
+                        .setMaxCropResultSize(700, 700)
                         .start(SettingsActivity.this);
             }
         });
@@ -97,11 +106,29 @@ public class SettingsActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 final Uri resultUri = result.getUri();
+                File thumb_filePath = new File(resultUri.getPath());
 
                 mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
                 final String current_uid = mCurrentUser.getUid();
 
-                final StorageReference filePath = mImageStorage.child("profile_images/").child(current_uid + ".jpg");
+                Bitmap thumb_bitmap = null;
+                try {
+                    thumb_bitmap = new Compressor(this)
+                            .setMaxWidth(70)
+                            .setMaxHeight(70)
+                            .setQuality(30)
+                            .compressToBitmap(thumb_filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] thumb_byte = baos.toByteArray();
+
+                final StorageReference filePath = mImageStorage.child("profile_images").child(current_uid + ".jpg");
+                final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(current_uid + ".jpg");
+
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -110,28 +137,49 @@ public class SettingsActivity extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 ImgURL = uri.toString();
 
-                                mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid).child("image");
-                                mUserDatabase.setValue(ImgURL).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                final UploadTask uploadTask = thumb_filepath.putBytes(thumb_byte);
+                                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(SettingsActivity.this, "Hohoo, Image Updated", Toast.LENGTH_SHORT).show();
-                                        settings_profile_image = findViewById(R.id.settings_profile_image);
-                                        settings_profile_image.setImageURI(resultUri);
+                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                ThumbURL = uri.toString();
+
+                                                Map update_hashMap = new HashMap();
+                                                update_hashMap.put("image", ImgURL);
+                                                update_hashMap.put("thumb_image", ThumbURL);
+
+                                                mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid);
+                                                mUserDatabase.updateChildren(update_hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(SettingsActivity.this, "Hohoo, Image Updated", Toast.LENGTH_SHORT).show();
+                                                        settings_profile_image = findViewById(R.id.settings_profile_image);
+                                                        settings_profile_image.setImageURI(resultUri);
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(SettingsActivity.this, "Oops, Error uploading image", Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            }
+                                        });
                                     }
                                 });
                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(SettingsActivity.this, "Oops, Error uploading thumbnail", Toast.LENGTH_LONG).show();
+                            }
                         });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SettingsActivity.this, "Oops2, Something Went Wrong", Toast.LENGTH_LONG).show();
-
                     }
                 });
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Toast.makeText(this, "Oops, Error Cropping Image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Oops, Error Cropping Image" + error.toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -154,7 +202,10 @@ public class SettingsActivity extends AppCompatActivity {
                 String status = dataSnapshot.child("status").getValue().toString();
                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
-                Picasso.get().load(image).into(mDislplayImage);
+                if (!image.equals("default")) {
+                    Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mDislplayImage);
+                    Log.d(TAG, "onDataChange: " + image);
+                }
                 mName.setText(name);
                 mStatus.setText(status);
 
