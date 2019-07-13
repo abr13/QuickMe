@@ -21,7 +21,7 @@
             android:layout_height="72dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@drawable/ic_launcher_background" />
 
         <!-- Email Label -->
         <com.google.android.material.textfield.TextInputLayout

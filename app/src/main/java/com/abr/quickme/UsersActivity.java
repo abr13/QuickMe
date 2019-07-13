@@ -1,6 +1,5 @@
 package com.abr.quickme;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -26,7 +26,8 @@ public class UsersActivity extends AppCompatActivity {
 
     private RecyclerView mUsersList;
     private Toolbar mToolbar;
-    private DatabaseReference mUsersDatabase;
+    private DatabaseReference mUsersDatabase, mUserOnline;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,10 @@ public class UsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_users);
 
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+        mUsersDatabase.keepSynced(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUserOnline = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
 
         mUsersList = findViewById(R.id.users_list);
         mToolbar = findViewById(R.id.users_appbar);
@@ -49,6 +54,11 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -61,7 +71,7 @@ public class UsersActivity extends AppCompatActivity {
             protected void onBindViewHolder(usersViewHolder usersViewHolder, int position, Users users) {
                 usersViewHolder.setName(users.getName());
                 usersViewHolder.setStatus(users.getStatus());
-                usersViewHolder.setThumb_image(users.getThumb_image(), getApplicationContext());
+                usersViewHolder.setThumb_image(users.getThumb_image());
 
                 final String user_id = getRef(position).getKey();
 
@@ -108,7 +118,7 @@ public class UsersActivity extends AppCompatActivity {
             statusView.setText(status);
         }
 
-        public void setThumb_image(String thumb_image, Context ctx) {
+        public void setThumb_image(String thumb_image) {
             CircleImageView imageView = mView.findViewById(R.id.layout_single_image);
             Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
         }

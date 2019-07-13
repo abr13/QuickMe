@@ -12,11 +12,16 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
+
     private FirebaseAuth mAuth;
+    private DatabaseReference mUserOnline;
+
 
     private ViewPager mViewPager;
     private MainPagerAdapter mPagerAdapter;
@@ -30,11 +35,22 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.main_tabPager);
         mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
-        mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
+        mTabLayout = findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
+
+//        FirebaseUser currentUser = mAuth.getInstance().getCurrentUser();
+//        if(currentUser==null)
+//        {
+//            sentToStart();
+//        }
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        try {
+            mUserOnline = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        } catch (Exception e) {
+            sentToStart();
+        }
 
         mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
@@ -48,10 +64,21 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             sentToStart();
+        } else {
+            mUserOnline.child("online").setValue(true);
         }
     }
-    private void sentToStart()
-    {
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            mUserOnline.child("online").setValue(false);
+        }
+    }
+
+    private void sentToStart() {
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();

@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -234,13 +235,17 @@ public class ProfileActivity extends AppCompatActivity {
 
                 //received, accept it
                 if (current_state.equals("req_received")) {
-                    final String currentDate = DateFormat.getDateInstance().format(new Date());
-                    mFriendDatabase.child(mCurrentUser.getUid()).child(selected_user_id).setValue(currentDate)
+
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    final String currentDateTime = dateFormat.format(date);
+                    //final String currentDate = DateFormat.getDateInstance().format(new Date());
+                    mFriendDatabase.child(mCurrentUser.getUid()).child(selected_user_id).child("date").setValue("Friend since :" + " " + currentDateTime)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
 
-                                    mFriendDatabase.child(selected_user_id).child(mCurrentUser.getUid()).setValue(currentDate)
+                                    mFriendDatabase.child(selected_user_id).child(mCurrentUser.getUid()).child("date").setValue("Friend since :" + " " + currentDateTime)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
