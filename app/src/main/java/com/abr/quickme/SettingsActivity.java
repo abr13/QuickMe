@@ -203,7 +203,7 @@ public class SettingsActivity extends AppCompatActivity {
                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                 if (!image.equals("default")) {
-                    Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mDislplayImage);
+                    Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(mDislplayImage);
                     Log.d(TAG, "onDataChange: " + image);
                 }
                 mName.setText(name);
