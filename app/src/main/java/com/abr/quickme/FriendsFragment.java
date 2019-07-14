@@ -93,7 +93,7 @@ public class FriendsFragment extends Fragment {
                         friendsViewHolder.setThumb_image(thumb_image);
 
                         if (dataSnapshot.hasChild("online")) {
-                            Boolean userOnline = (boolean) dataSnapshot.child("online").getValue();
+                            String userOnline = dataSnapshot.child("online").getValue().toString();
                             friendsViewHolder.setUserOnline(userOnline);
                         }
                     }
@@ -121,33 +121,37 @@ public class FriendsFragment extends Fragment {
     public static class friendsViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
-        public friendsViewHolder(View itemView) {
+        friendsViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
 
         }
 
-        public void setDate(String date) {
+        void setDate(String date) {
             TextView userStatusView = mView.findViewById(R.id.layout_single_status);
             userStatusView.setText(date);
         }
 
-        public void setName(String name) {
+        void setName(String name) {
             TextView userNameView = mView.findViewById(R.id.layout_single_name);
             userNameView.setText(name);
         }
 
-        public void setThumb_image(String thumb_image) {
+        void setThumb_image(String thumb_image) {
             CircleImageView imageView = mView.findViewById(R.id.layout_single_image);
             Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
         }
 
-        public void setUserOnline(Boolean online_status) {
+        void setUserOnline(String online_status) {
             ImageView userOnlineView = mView.findViewById(R.id.layout_single_isOnline);
-            if (online_status) {
+            TextView userLastseen = mView.findViewById(R.id.layout_single_lastseen);
+            if (online_status.equals("true")) {
                 userOnlineView.setVisibility(View.VISIBLE);
+                userLastseen.setVisibility(View.INVISIBLE);
             } else {
                 userOnlineView.setVisibility(View.INVISIBLE);
+                userLastseen.setVisibility(View.VISIBLE);
+                userLastseen.setText("Lastseen : " + online_status);
             }
         }
     }
