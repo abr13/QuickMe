@@ -42,13 +42,6 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout = findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
-//        FirebaseUser currentUser = mAuth.getInstance().getCurrentUser();
-//        if(currentUser==null)
-//        {
-//            sentToStart();
-//        }
-
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         try {
             mUserOnline = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
@@ -107,6 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.main_logout_btn) {
             //logout
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            final String currentDateTime = dateFormat.format(date);
+
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                mUserOnline.child("online").setValue(currentDateTime);
+            }
+
             mAuth.signOut();
             sentToStart();
         } else if (item.getItemId() == R.id.main_accsetting_btn) {

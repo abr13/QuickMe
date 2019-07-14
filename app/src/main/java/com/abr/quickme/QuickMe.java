@@ -34,6 +34,7 @@ public class QuickMe extends Application {
 
         //online/lastseen
 
+
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         final String currentDateTime = dateFormat.format(date);

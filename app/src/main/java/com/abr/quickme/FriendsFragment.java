@@ -1,6 +1,9 @@
 package com.abr.quickme;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,13 +84,13 @@ public class FriendsFragment extends Fragment {
 
                 friendsViewHolder.setDate(friends.getDate());
 
-                String listUserId = getRef(i).getKey();
+                final String listUserId = getRef(i).getKey();
 
                 mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String name = dataSnapshot.child("name").getValue().toString();
-                        String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                        final String name = dataSnapshot.child("name").getValue().toString();
+                        final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                         friendsViewHolder.setName(name);
                         friendsViewHolder.setThumb_image(thumb_image);
@@ -96,6 +99,32 @@ public class FriendsFragment extends Fragment {
                             String userOnline = dataSnapshot.child("online").getValue().toString();
                             friendsViewHolder.setUserOnline(userOnline);
                         }
+
+                        friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                CharSequence options[] = new CharSequence[]{"Open Profile", "Send Message"};
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                builder.setTitle("Perform Task");
+                                builder.setItems(options, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (which == 0) {
+                                            Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                                            profileIntent.putExtra("user_id", listUserId);
+                                            startActivity(profileIntent);
+                                        }
+                                        if (which == 1) {
+                                            Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                            chatIntent.putExtra("user_id", listUserId);
+                                            chatIntent.putExtra("mChatUser", name);
+                                            startActivity(chatIntent);
+                                        }
+                                    }
+                                });
+                                builder.show();
+                            }
+                        });
                     }
 
                     @Override
