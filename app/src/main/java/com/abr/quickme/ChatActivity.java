@@ -157,7 +157,6 @@ public class ChatActivity extends AppCompatActivity {
         });
         //send message
 
-
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +228,8 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("seen", "false");
             messageMap.put("type", "text");
             messageMap.put("time", currentDateTime);
-            messageMap.put("from", mCurrentUserId.toString());
+            messageMap.put("from", mCurrentUserId);
+            messageMap.put("to", mChatUserId);
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);

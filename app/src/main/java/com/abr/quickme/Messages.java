@@ -1,14 +1,15 @@
 package com.abr.quickme;
 
 public class Messages {
-    private String message, type, from, time, seen;
+    private String message, type, from, time, seen, to;
 
-    public Messages(String message, String type, String from, String time, String seen) {
+    public Messages(String message, String type, String from, String time, String seen, String to) {
         this.message = message;
         this.type = type;
         this.from = from;
         this.time = time;
         this.seen = seen;
+        this.to = to;
     }
 
     public Messages() {
@@ -53,6 +54,14 @@ public class Messages {
 
     public void setSeen(String seen) {
         this.seen = seen;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 
 }
