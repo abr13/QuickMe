@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put("name", name);
-                            userMap.put("status", "It's Quick Messaging!");
+                            userMap.put("status", "It's Quick Messaging, Be Quick!");
                             userMap.put("image", "default");
                             userMap.put("thumb_image", "default");
 

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.abr.quickme.models.Messages;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -112,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (online.equals("true")) {
                     mLastSeenView.setText("online");
                 } else {
-                    mLastSeenView.setText(online);
+                    mLastSeenView.setText("last seen " + online);
                 }
                 Picasso.get().load(thumb).placeholder(R.drawable.profile_sample).into(mProfileImage);
             }

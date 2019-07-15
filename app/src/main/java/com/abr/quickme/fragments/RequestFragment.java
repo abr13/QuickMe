@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.fragments;
 
 
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+
+import com.abr.quickme.R;
 
 
 /**

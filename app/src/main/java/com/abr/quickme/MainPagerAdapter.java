@@ -4,6 +4,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.abr.quickme.fragments.ChatsFragment;
+import com.abr.quickme.fragments.FriendsFragment;
+import com.abr.quickme.fragments.RequestFragment;
+
 class MainPagerAdapter extends FragmentPagerAdapter {
 
     public MainPagerAdapter(FragmentManager fm) {

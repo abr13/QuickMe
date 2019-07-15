@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.fragments;
 
 
 import android.app.AlertDialog;
@@ -16,6 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.abr.quickme.ChatActivity;
+import com.abr.quickme.ProfileActivity;
+import com.abr.quickme.R;
+import com.abr.quickme.models.Friends;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +58,7 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
 
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
-        mFriendsList = mMainView.findViewById(R.id.friends_list);
+        mFriendsList = mMainView.findViewById(R.id.friends_list_recycler);
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();

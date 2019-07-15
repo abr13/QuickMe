@@ -19,7 +19,7 @@
         android:id="@+id/custom_bar_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:text="Display Name"
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/custom_bar_name"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="0dp"
         android:text="Last Seen"
         android:textColor="#fff" />
 
