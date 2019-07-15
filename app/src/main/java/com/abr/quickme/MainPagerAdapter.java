@@ -10,7 +10,7 @@ import com.abr.quickme.fragments.RequestFragment;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
 
-    public MainPagerAdapter(FragmentManager fm) {
+    MainPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

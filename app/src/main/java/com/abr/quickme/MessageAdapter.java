@@ -16,13 +16,13 @@ import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    public static final int MSG_TYPE_LEFT = 0;
-    public static final int MSG_TYPE_RIGHT = 1;
+    private static final int MSG_TYPE_LEFT = 0;
+    private static final int MSG_TYPE_RIGHT = 1;
     private List<Messages> mMessageList;
     private FirebaseUser Cuser;
 
 
-    public MessageAdapter(List<Messages> mMessageList) {
+    MessageAdapter(List<Messages> mMessageList) {
         this.mMessageList = mMessageList;
     }
 
@@ -67,10 +67,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
     }
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
-        public TextView messageText, timeText;
+    class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView messageText, timeText;
 
-        public MessageViewHolder(@NonNull View itemView) {
+        MessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.message_text);

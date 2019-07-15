@@ -49,8 +49,6 @@ public class UsersActivity extends AppCompatActivity {
 
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
-
-
     }
 
     @Override

@@ -57,12 +57,16 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = textEmail.getEditText().getText().toString();
                 String password = textPassword.getEditText().getText().toString();
 
-                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
+                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
                     mRegProgress.setTitle("Registering User");
                     mRegProgress.setMessage("Please wait while we prepare a cup of coffee for you " + name + " !");
                     mRegProgress.setCanceledOnTouchOutside(false);
                     mRegProgress.show();
                     register_user(name, email, password);
+                } else {
+                    textName.getEditText().setError("Name is required");
+                    textEmail.getEditText().setError("Email is required");
+                    textPassword.getEditText().setError("Password is required");
                 }
             }
         });

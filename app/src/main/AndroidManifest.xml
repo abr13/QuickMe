@@ -15,17 +15,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ChatActivity"
+            android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".ChatActivity"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".ProfileActivity" />
         <activity
             android:name=".UsersActivity"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".StatusSettingsActivity"
-            android:parentActivityName=".SettingsActivity" />
+            android:parentActivityName=".ProfileSettingsActivity" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ProfileSettingsActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".StartActivity" />
         <activity

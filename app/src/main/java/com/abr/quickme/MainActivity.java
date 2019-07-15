@@ -21,25 +21,18 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-
     private FirebaseAuth mAuth;
     private DatabaseReference mUserOnline;
 
-
-    private ViewPager mViewPager;
-    private MainPagerAdapter mPagerAdapter;
-
-    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mViewPager = findViewById(R.id.main_tabPager);
-        mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        ViewPager mViewPager = findViewById(R.id.main_tabPager);
+        MainPagerAdapter mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
-        mTabLayout = findViewById(R.id.main_tabs);
+        TabLayout mTabLayout = findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
         mAuth = FirebaseAuth.getInstance();
@@ -49,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             sentToStart();
         }
 
-        mToolbar = findViewById(R.id.main_page_toolbar);
+        Toolbar mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Quick Me");
     }
@@ -114,12 +107,16 @@ public class MainActivity extends AppCompatActivity {
             sentToStart();
         } else if (item.getItemId() == R.id.main_accsetting_btn) {
             //account settings
-            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(settingsIntent);
+            Intent profileSettingsIntent = new Intent(MainActivity.this, ProfileSettingsActivity.class);
+            startActivity(profileSettingsIntent);
         } else if (item.getItemId() == R.id.main_allusers_btn) {
             //all users
             Intent allUsersIntent = new Intent(MainActivity.this, UsersActivity.class);
             startActivity(allUsersIntent);
+        } else if (item.getItemId() == R.id.main_settings_btn) {
+            //Open Account/App Settings
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
         }
         return true;
     }
