@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.abr.quickme.fragments.ChatsFragment;
 import com.abr.quickme.fragments.FriendsFragment;
-import com.abr.quickme.fragments.RequestFragment;
+import com.abr.quickme.fragments.RequestsFragment;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -19,8 +19,8 @@ class MainPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                RequestFragment requestFragment = new RequestFragment();
-                return requestFragment;
+                RequestsFragment requestsFragment = new RequestsFragment();
+                return requestsFragment;
             case 1:
                 ChatsFragment chatsFragment = new ChatsFragment();
                 return chatsFragment;

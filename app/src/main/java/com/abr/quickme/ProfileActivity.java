@@ -141,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
-
+///1///////////////////////////////////////
         mRequestDeclineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +239,7 @@ public class ProfileActivity extends AppCompatActivity {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     final String currentDateTime = dateFormat.format(date);
-                    //final String currentDate = DateFormat.getDateInstance().format(new Date());
+/////////////////////////////////////////////accept
                     mFriendDatabase.child(mCurrentUser.getUid()).child(selected_user_id).child("date").setValue("Friend since :" + " " + currentDateTime)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

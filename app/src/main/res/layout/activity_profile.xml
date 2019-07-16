@@ -61,7 +61,7 @@
         android:id="@+id/profileRequest_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profileFriendCount_textView"
+        android:layout_above="@id/profileDeclineRequest_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/colorAccent"
@@ -73,13 +73,11 @@
         android:id="@+id/profileDeclineRequest_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileRequest_button"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="48dp"
         android:background="@color/colorAccent"
         android:gravity="center_horizontal"
         android:padding="12dp"
+        android:layout_alignParentBottom="true"
         android:text="Decline friend Request" />
 </RelativeLayout>
