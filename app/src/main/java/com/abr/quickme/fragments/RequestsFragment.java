@@ -49,6 +49,8 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
     private View mMainView;
     private DatabaseReference mFriendRequestDatabase, mFriendDatabase;
 
+    boolean mFLAG;
+
 
     public RequestsFragment() {
         // Required empty public constructor
@@ -85,11 +87,12 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
 
+
         FirebaseRecyclerOptions<Requests> options =
                 new FirebaseRecyclerOptions.Builder<Requests>()
                         .setQuery(mFriendReqDatabase, Requests.class)
                         .build();
-        FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder>(options) {
+        final FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final requestsViewHolder requestsViewHolder, int i, @NonNull Requests requests) {
                 listUserId = getRef(i).getKey();
@@ -186,8 +189,12 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
             }
 
         };
+
+
         mFriendReqsList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
+
+
     }
 
     @Override

@@ -63,9 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         mRequestDeclineButton.setVisibility(View.INVISIBLE);
         mRequestDeclineButton.setEnabled(false);
 
-
         current_state = "not_friends";
-
 
         mProgressdialog = new ProgressDialog(this);
         mProgressdialog.setTitle("Loading Users Data...");
