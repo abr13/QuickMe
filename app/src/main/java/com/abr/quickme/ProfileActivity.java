@@ -20,12 +20,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -35,6 +33,8 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView mProfileImage;
     private TextView mProfileName, mProfileStatus, mProfileFriendsCount;
     private FirebaseUser mCurrentUser;
+
+    private int friendCounts = 0;
 
     private String current_state;
 
@@ -63,7 +63,9 @@ public class ProfileActivity extends AppCompatActivity {
         mRequestDeclineButton.setVisibility(View.INVISIBLE);
         mRequestDeclineButton.setEnabled(false);
 
+
         current_state = "not_friends";
+
 
         mProgressdialog = new ProgressDialog(this);
         mProgressdialog.setTitle("Loading Users Data...");
@@ -78,9 +80,18 @@ public class ProfileActivity extends AppCompatActivity {
                 String status = dataSnapshot.child("status").getValue().toString();
                 String image = dataSnapshot.child("image").getValue().toString();
 
+
                 mProfileName.setText(displayName);
                 mProfileStatus.setText(status);
                 Picasso.get().load(image).placeholder(R.drawable.profile_sample2).into(mProfileImage);
+
+
+                //prevent sending request to current user itself
+                if (mCurrentUser.getUid().equals(selected_user_id)) {
+                    mRequestDeclineButton.setVisibility(View.INVISIBLE);
+                    mProfileSendRequestButton.setVisibility(View.INVISIBLE);
+                }
+
 
                 //
                 mFriendRequestDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -234,16 +245,13 @@ public class ProfileActivity extends AppCompatActivity {
                 //received, accept it
                 if (current_state.equals("req_received")) {
 
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    final String currentDateTime = dateFormat.format(date);
 /////////////////////////////////////////////accept
-                    mFriendDatabase.child(mCurrentUser.getUid()).child(selected_user_id).child("date").setValue("Friend since :" + " " + currentDateTime)
+                    mFriendDatabase.child(mCurrentUser.getUid()).child(selected_user_id).child("date").setValue("Friend since :" + " " + ServerValue.TIMESTAMP)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
 
-                                    mFriendDatabase.child(selected_user_id).child(mCurrentUser.getUid()).child("date").setValue("Friend since :" + " " + currentDateTime)
+                                    mFriendDatabase.child(selected_user_id).child(mCurrentUser.getUid()).child("date").setValue("Friend since :" + " " + ServerValue.TIMESTAMP)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {

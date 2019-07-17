@@ -2,6 +2,7 @@ package com.abr.quickme.fragments;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.ChatActivity;
+import com.abr.quickme.GetTimeAgo;
 import com.abr.quickme.ProfileActivity;
 import com.abr.quickme.R;
 import com.abr.quickme.models.Friends;
@@ -101,7 +103,7 @@ public class FriendsFragment extends Fragment {
 
                         if (dataSnapshot.hasChild("online")) {
                             String userOnline = dataSnapshot.child("online").getValue().toString();
-                            friendsViewHolder.setUserOnline(userOnline);
+                            friendsViewHolder.setUserOnline(userOnline, getContext());
                         }
 
                         friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -175,16 +177,22 @@ public class FriendsFragment extends Fragment {
             Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
         }
 
-        void setUserOnline(String online_status) {
+        void setUserOnline(String online_status, Context context) {
             ImageView userOnlineView = mView.findViewById(R.id.layout_single_isOnline);
             TextView userLastseen = mView.findViewById(R.id.layout_single_lastseen);
             if (online_status.equals("true")) {
                 userOnlineView.setVisibility(View.VISIBLE);
                 userLastseen.setVisibility(View.INVISIBLE);
             } else {
+                GetTimeAgo getTimeAgo = new GetTimeAgo();
+
+                long lastTime = Long.parseLong(online_status);
+
+                String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, context);
+
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("Lastseen : " + online_status);
+                userLastseen.setText("Lastseen : " + lastSeenTime);
             }
         }
     }

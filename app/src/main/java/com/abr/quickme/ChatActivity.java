@@ -1,6 +1,8 @@
 package com.abr.quickme;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.abr.quickme.models.Messages;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,13 +30,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,14 +109,21 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String online = dataSnapshot.child("online").getValue().toString();
-                String thumb = dataSnapshot.child("thumb_image").getValue().toString();
+                String image = dataSnapshot.child("image").getValue().toString();
 
                 if (online.equals("true")) {
                     mLastSeenView.setText("online");
                 } else {
-                    mLastSeenView.setText("last seen " + online);
+
+                    GetTimeAgo getTimeAgo = new GetTimeAgo();
+
+                    long lastTime = Long.parseLong(online);
+
+                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+
+                    mLastSeenView.setText("last seen " + lastSeenTime);
                 }
-                Picasso.get().load(thumb).placeholder(R.drawable.profile_sample).into(mProfileImage);
+                Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mProfileImage);
             }
 
             @Override
@@ -128,12 +136,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.hasChild(mChatUserId)) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date date = new Date();
-                    final String currentDateTime = dateFormat.format(date);
                     Map chatAddMap = new HashMap();
                     chatAddMap.put("seen", false);
-                    chatAddMap.put("timestamp", currentDateTime);
+                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
 
                     Map chatUserMap = new HashMap();
                     chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUserId, chatAddMap);
@@ -165,6 +170,32 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(800); // Optional
+        imagePopup.setWindowWidth(800); // Optional
+        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+        imagePopup.setFullScreen(true); // Optional
+        imagePopup.setHideCloseIcon(true);  // Optional
+        imagePopup.setImageOnClickClose(true);// Optional
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(mProfileImage.getDrawable());
+                imagePopup.viewPopup();
+
+            }
+        });
+
+        mTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(ChatActivity.this, ProfileActivity.class);
+                profileIntent.putExtra("user_id", mChatUserId);
+                startActivity(profileIntent);
+            }
+        });
 
     }
 
@@ -214,10 +245,6 @@ public class ChatActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(message)) {
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-            String currentDateTime = dateFormat.format(date);
-
             String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
             String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
 
@@ -228,7 +255,7 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("message", message);
             messageMap.put("seen", "false");
             messageMap.put("type", "text");
-            messageMap.put("time", currentDateTime);
+            messageMap.put("time", ServerValue.TIMESTAMP);
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
 

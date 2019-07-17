@@ -60,6 +60,7 @@ public class UsersActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+
         FirebaseRecyclerOptions<Users> options =
                 new FirebaseRecyclerOptions.Builder<Users>()
                         .setQuery(mUsersDatabase, Users.class)
@@ -117,7 +118,7 @@ public class UsersActivity extends AppCompatActivity {
         }
 
         public void setThumb_image(String thumb_image) {
-            CircleImageView imageView = mView.findViewById(R.id.layout_single_image);
+            final CircleImageView imageView = mView.findViewById(R.id.layout_single_image);
             Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
         }
     }

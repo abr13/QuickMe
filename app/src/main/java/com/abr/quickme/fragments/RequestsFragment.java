@@ -2,6 +2,7 @@ package com.abr.quickme.fragments;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RequestsFragment extends Fragment implements View.OnClickListener {
 
 
+    private static final String TAG = "REQUEST";
     Button reqAcceptBtn, reqDeclineBtn;
     String listUserId;
     private RecyclerView mFriendReqsList;
@@ -79,6 +81,25 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
         mFriendReqsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
+//        mFriendRequestDatabase.child(mCurrentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.hasChild(listUserId)) {
+//                    String req_type = dataSnapshot.child(listUserId).child("request_type").getValue().toString();
+//                    if (req_type.equals("received")) {
+//
+//                        reqAcceptBtn.setEnabled(false);
+//                        reqAcceptBtn.setVisibility(View.INVISIBLE);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
         return mMainView;
 
     }
@@ -97,11 +118,15 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
             protected void onBindViewHolder(@NonNull final requestsViewHolder requestsViewHolder, int i, @NonNull Requests requests) {
                 listUserId = getRef(i).getKey();
 
+
+                //if(!mCurrentUserId.equals(listUserId))
+                //{
                 mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final String name = dataSnapshot.child("name").getValue().toString();
                         final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                        Log.i(TAG, "onBindViewHolder: " + listUserId);
 
                         requestsViewHolder.setName(name);
                         requestsViewHolder.setThumb_image(thumb_image);
@@ -177,6 +202,9 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
 
                     }
                 });
+                //}
+
+
             }
 
             @NonNull
@@ -190,10 +218,8 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
 
         };
 
-
         mFriendReqsList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
-
 
     }
 

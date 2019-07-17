@@ -50,9 +50,9 @@
         android:id="@+id/profileFriendCount_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profileStatus_textView"
+        android:layout_above="@+id/profileRequest_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="180dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center_horizontal"
         android:text="Friends Count"
         android:textAlignment="center" />
@@ -61,9 +61,10 @@
         android:id="@+id/profileRequest_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/profileDeclineRequest_button"
+        android:layout_above="@+id/profileDeclineRequest_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="@color/colorAccent"
         android:gravity="center_horizontal"
         android:padding="12dp"
@@ -73,11 +74,12 @@
         android:id="@+id/profileDeclineRequest_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="80dp"
         android:background="@color/colorAccent"
         android:gravity="center_horizontal"
         android:padding="12dp"
-        android:layout_alignParentBottom="true"
-        android:text="Decline friend Request" />
+        android:text="Decline friend request" />
 </RelativeLayout>

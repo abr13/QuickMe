@@ -1,11 +1,13 @@
 package com.abr.quickme.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.ChatActivity;
+import com.abr.quickme.GetTimeAgo;
 import com.abr.quickme.R;
 import com.abr.quickme.models.Chats;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -90,8 +93,14 @@ public class ChatsFragment extends Fragment {
                         final String name = dataSnapshot.child("name").getValue().toString();
                         final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
+
                         chatsViewHolder.setName(name);
                         chatsViewHolder.setThumb(thumb_image);
+
+                        if (dataSnapshot.hasChild("online")) {
+                            String userOnline = dataSnapshot.child("online").getValue().toString();
+                            chatsViewHolder.setUserOnline(userOnline, getContext());
+                        }
 
                         chatsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -117,6 +126,10 @@ public class ChatsFragment extends Fragment {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.single_user_layout, parent, false);
 
+                TextView layout_single_status = view.findViewById(R.id.layout_single_status);
+                layout_single_status.setEnabled(false);
+                layout_single_status.setVisibility(View.INVISIBLE);
+
                 return new ChatsFragment.chatsViewHolder(view);
             }
         };
@@ -132,7 +145,6 @@ public class ChatsFragment extends Fragment {
             mView = itemView;
 
         }
-
         void setName(String name) {
             TextView userNameView = mView.findViewById(R.id.layout_single_name);
             userNameView.setText(name);
@@ -141,6 +153,25 @@ public class ChatsFragment extends Fragment {
         void setThumb(String thumb_image) {
             CircleImageView imageView = mView.findViewById(R.id.layout_single_image);
             Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
+        }
+
+        void setUserOnline(String online_status, Context context) {
+            ImageView userOnlineView = mView.findViewById(R.id.layout_single_isOnline);
+            TextView userLastseen = mView.findViewById(R.id.layout_single_lastseen);
+            if (online_status.equals("true")) {
+                userOnlineView.setVisibility(View.VISIBLE);
+                userLastseen.setVisibility(View.INVISIBLE);
+            } else {
+                GetTimeAgo getTimeAgo = new GetTimeAgo();
+
+                long lastTime = Long.parseLong(online_status);
+
+                String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, context);
+
+                userOnlineView.setVisibility(View.INVISIBLE);
+                userLastseen.setVisibility(View.VISIBLE);
+                userLastseen.setText("last seen : " + lastSeenTime);
+            }
         }
     }
 }
