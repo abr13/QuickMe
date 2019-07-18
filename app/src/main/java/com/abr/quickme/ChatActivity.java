@@ -34,7 +34,10 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,6 +248,10 @@ public class ChatActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(message)) {
 
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            final String currentDateTime = dateFormat.format(date);
+
             String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
             String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
 
@@ -255,7 +262,7 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("message", message);
             messageMap.put("seen", "false");
             messageMap.put("type", "text");
-            messageMap.put("time", ServerValue.TIMESTAMP);
+            messageMap.put("time", currentDateTime);
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
 

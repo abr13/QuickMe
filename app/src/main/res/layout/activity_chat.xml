@@ -49,7 +49,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="#fff"
-            android:src="@drawable/common_google_signin_btn_icon_dark_normal"
+            android:baselineAlignBottom="true"
+            android:src="@drawable/round_add_circle_outline_24"
             android:text="+" />
 
         <EditText
@@ -57,8 +58,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="8"
+            android:hint="Type your message..."
+            android:maxWidth="310dp"
             android:background="#fff"
-            android:hint="Type..."
+            android:maxHeight="200dp"
             android:padding="10dp" />
 
         <ImageButton
@@ -67,7 +70,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="#fff"
-            android:src="@drawable/common_google_signin_btn_icon_dark"
+            android:baselineAlignBottom="true"
+            android:src="@drawable/round_send_24"
             android:text="send" />
     </LinearLayout>
 
