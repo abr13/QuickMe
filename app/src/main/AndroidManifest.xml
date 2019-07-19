@@ -15,8 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ChangePasswordActivity"
+            android:name=".AccountRecoveryActivity"
+            android:parentActivityName=".LoginActivity"
             android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity" />

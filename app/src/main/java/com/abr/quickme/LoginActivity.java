@@ -86,5 +86,13 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
+
+    }
+
+    //forgotten_password
+    public void onClick(View v) {
+        Intent accountRecoveryIntent = new Intent(LoginActivity.this, AccountRecoveryActivity.class);
+        startActivity(accountRecoveryIntent);
     }
 }
