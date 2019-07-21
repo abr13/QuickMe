@@ -1,5 +1,7 @@
 package com.abr.quickme;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.abr.quickme.models.Messages;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
@@ -43,12 +46,38 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MessageViewHolder holder, final int position) {
 
         Messages message = mMessageList.get(position);
-        //String from_user = message.getFrom();
+        final String from_user = message.getFrom();
+
+        //Decrypt Message Here
+//        MessageEncryption me=new MessageEncryption();
+//        byte[] decrypted=me.decrypt(, BigInteger.valueOf(message.getKey()));
+//        Log.d(TAG, "onBindViewHolder: "+me.bytesToString(decrypted)+"....||...."+new String(decrypted));
+
         holder.messageText.setText(message.getMessage());
         holder.timeText.setText(message.getTime());
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                CharSequence options[] = new CharSequence[]{"Delete Chat"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                builder.setTitle("Chat option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            final DatabaseReference mRootRef;
+
+                        }
+                    }
+                });
+                builder.show();
+
+                return true;
+            }
+        });
     }
 
     @Override

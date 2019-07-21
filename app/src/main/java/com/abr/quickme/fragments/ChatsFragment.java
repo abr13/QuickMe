@@ -1,7 +1,9 @@
 package com.abr.quickme.fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -111,6 +113,49 @@ public class ChatsFragment extends Fragment {
                                 startActivity(chatIntent);
                             }
                         });
+                        chatsViewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                CharSequence options[] = new CharSequence[]{"Delete Chat"};
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                builder.setTitle("Chat option");
+                                builder.setItems(options, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (which == 0) {
+                                            final DatabaseReference mRootRef;
+                                            mRootRef = FirebaseDatabase.getInstance().getReference();
+//                                            mRootRef.child("Messages").child(mCurrentUserId).child(listUserId).removeValue()
+//                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                        @Override
+//                                                        public void onSuccess(Void aVoid) {
+//                                                            mRootRef.child("Messages").child(listUserId).child(mCurrentUserId).removeValue()
+//                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                                        @Override
+//                                                                        public void onSuccess(Void aVoid) {
+//                                                                            mRootRef.child("Chat").child(mCurrentUserId).child(listUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                                                @Override
+//                                                                                public void onSuccess(Void aVoid) {
+//                                                                                    mRootRef.child("Chat").child(listUserId).child(mCurrentUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                                                        @Override
+//                                                                                        public void onSuccess(Void aVoid) {
+//                                                                                            Toast.makeText(getContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
+//                                                                                        }
+//                                                                                    });
+//                                                                                }
+//                                                                            });
+//                                                                        }
+//                                                                    });
+//                                                        }
+//                                                    });
+                                        }
+                                    }
+                                });
+                                builder.show();
+
+                                return true;
+                            }
+                        });
                     }
 
                     @Override
@@ -145,6 +190,7 @@ public class ChatsFragment extends Fragment {
             mView = itemView;
 
         }
+
         void setName(String name) {
             TextView userNameView = mView.findViewById(R.id.layout_single_name);
             userNameView.setText(name);

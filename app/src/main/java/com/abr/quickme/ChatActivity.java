@@ -47,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatActivity extends AppCompatActivity {
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private static final String TAG = "CHAT ACTIVITY";
     private final List<Messages> messagesList = new ArrayList<>();
     Toolbar mChatToolbar;
     private String mChatUserId, mChatUserName;
@@ -122,7 +123,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     long lastTime = Long.parseLong(online);
 
-                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
 
                     mLastSeenView.setText("last seen " + lastSeenTime);
                 }
@@ -213,6 +214,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Messages message = dataSnapshot.getValue(Messages.class);
 
+                //Decrypt Message Here//X X
                 messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
 
@@ -258,6 +260,11 @@ public class ChatActivity extends AppCompatActivity {
             DatabaseReference user_message_push = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId).push();
             String push_id = user_message_push.getKey();
 
+            //Encrypt Message Here
+//            MessageEncryption me=new MessageEncryption();
+//            byte[] b=me.encrypt(message.getBytes());
+//            String encrypted= MessageEncryption.bytesToString(b);
+
             Map messageMap = new HashMap();
             messageMap.put("message", message);
             messageMap.put("seen", "false");
@@ -265,6 +272,7 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("time", currentDateTime);
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
+            //messageMap.put("key",me.N);
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
