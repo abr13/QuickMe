@@ -80,18 +80,15 @@ public class ProfileActivity extends AppCompatActivity {
                 String status = dataSnapshot.child("status").getValue().toString();
                 String image = dataSnapshot.child("image").getValue().toString();
 
-
                 mProfileName.setText(displayName);
                 mProfileStatus.setText(status);
                 Picasso.get().load(image).placeholder(R.drawable.profile_sample2).into(mProfileImage);
-
 
                 //prevent sending request to current user itself
                 if (mCurrentUser.getUid().equals(selected_user_id)) {
                     mRequestDeclineButton.setVisibility(View.INVISIBLE);
                     mProfileSendRequestButton.setVisibility(View.INVISIBLE);
                 }
-
 
                 //
                 mFriendRequestDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
