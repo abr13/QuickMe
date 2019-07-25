@@ -1,9 +1,12 @@
 package com.abr.quickme;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -214,8 +217,6 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Messages message = dataSnapshot.getValue(Messages.class);
-
-                //Decrypt Message Here//X X
                 messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
 
@@ -265,15 +266,34 @@ public class ChatActivity extends AppCompatActivity {
 //            MessageEncryption me=new MessageEncryption();
 //            byte[] b=me.encrypt(message.getBytes());
 //            String encrypted= MessageEncryption.bytesToString(b);
+//            Log.d(TAG, "sendMessage: "+encrypted);
+            MessageEncryption me = new MessageEncryption();
+
+            TelephonyManager telephonyManager;
+            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+            String device_id = telephonyManager.getDeviceId();
+
+            String m = me.encrypt(message, device_id);
+            Log.d(TAG, "sendMessage: " + m + "///" + device_id);
 
             Map messageMap = new HashMap();
-            messageMap.put("message", message);
+            messageMap.put("message", m);
             messageMap.put("seen", "false");
             messageMap.put("type", "text");
             messageMap.put("time", currentDateTime);
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
-            //messageMap.put("key",me.N);
+            messageMap.put("key", device_id);
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);

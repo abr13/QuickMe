@@ -3,20 +3,7 @@ package com.abr.quickme.models;
 public class Messages {
     String message;
     String type, from, time, seen, to;
-    long key;
-
-    public Messages(String message) {
-        this.message = message;
-    }
-
-    public Messages(String type, String from, String time, String seen, String to, long key) {
-        this.type = type;
-        this.from = from;
-        this.time = time;
-        this.seen = seen;
-        this.to = to;
-        this.key = key;
-    }
+    String key;
 
     public String getMessage() {
         return message;
@@ -66,11 +53,21 @@ public class Messages {
         this.to = to;
     }
 
-    public long getKey() {
+    public Messages(String message, String type, String from, String time, String seen, String to, String key) {
+        this.message = message;
+        this.type = type;
+        this.from = from;
+        this.time = time;
+        this.seen = seen;
+        this.to = to;
+        this.key = key;
+    }
+
+    public String getKey() {
         return key;
     }
 
-    public void setKey(long key) {
+    public void setKey(String key) {
         this.key = key;
     }
 

@@ -2,6 +2,7 @@ package com.abr.quickme;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
@@ -53,10 +56,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         //Decrypt Message Here
 //        MessageEncryption me=new MessageEncryption();
-//        byte[] decrypted=me.decrypt(, BigInteger.valueOf(message.getKey()));
-//        Log.d(TAG, "onBindViewHolder: "+me.bytesToString(decrypted)+"....||...."+new String(decrypted));
+//        byte[] m= message.getMessage().getBytes();
+//
+//        byte[] decrypted=me.decrypt(m,new BigInteger(message.getKey()));
+//        Log.d(TAG, "onBindViewHolder: "+new String(decrypted));
 
-        holder.messageText.setText(message.getMessage());
+        MessageEncryption me = new MessageEncryption();
+        String d = me.decrypt(message.getMessage(), message.getKey());
+        Log.d(TAG, "onBindViewHolder: " + d + "///" + message.getKey());
+
+        holder.messageText.setText(d.toString());
         holder.timeText.setText(message.getTime());
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
