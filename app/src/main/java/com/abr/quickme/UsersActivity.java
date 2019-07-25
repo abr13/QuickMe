@@ -105,6 +105,9 @@ public class UsersActivity extends AppCompatActivity {
             super(itemView);
             mView = itemView;
 
+            TextView layout_single_lastseen = mView.findViewById(R.id.layout_single_lastseen);
+            layout_single_lastseen.setVisibility(View.INVISIBLE);
+
         }
 
         public void setName(String name) {

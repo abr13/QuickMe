@@ -33,7 +33,7 @@
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btn_gsignin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></com.google.android.gms.common.SignInButton>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </RelativeLayout>

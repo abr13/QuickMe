@@ -3,6 +3,7 @@ package com.abr.quickme;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -97,6 +99,24 @@ public class ProfileSettingsActivity extends AppCompatActivity {
                 String status_value = mStatus.getText().toString();
                 statusSettingsIntent.putExtra("status_value", status_value);
                 startActivity(statusSettingsIntent);
+            }
+        });
+
+        //show full screen image
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(800); // Optional
+        imagePopup.setWindowWidth(800); // Optional
+        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+        imagePopup.setFullScreen(true); // Optional
+        imagePopup.setHideCloseIcon(true);  // Optional
+        imagePopup.setImageOnClickClose(true);// Optional
+
+        mDislplayImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(mDislplayImage.getDrawable());
+                imagePopup.viewPopup();
+
             }
         });
     }

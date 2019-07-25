@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LOGIN";
     TextInputLayout textlogEmail, textlogPassword;
     Button btn_login;
     private Toolbar mToolbar;
@@ -44,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         textlogEmail = findViewById(R.id.textlogEmail);
         textlogPassword = findViewById(R.id.textlogPassword);
         btn_login = findViewById(R.id.btn_login);
-
+        final int i = 10;
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,6 +58,9 @@ public class LoginActivity extends AppCompatActivity {
                     mRegProgress.setMessage("Your coffee is getting ready !");
                     mRegProgress.setCanceledOnTouchOutside(false);
                     mRegProgress.show();
+
+                    Log.i(TAG, "onClick: " + i);
+
                     signin_user(email, password);
                 } else {
                     textlogEmail.getEditText().setError("Enter email");

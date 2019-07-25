@@ -1,6 +1,7 @@
 package com.abr.quickme;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -59,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileFriendsCount = findViewById(R.id.profileFriendCount_textView);
         mProfileSendRequestButton = findViewById(R.id.profileRequest_button);
         mRequestDeclineButton = findViewById(R.id.profileDeclineRequest_button);
+        mProfileFriendsCount = findViewById(R.id.profileFriendCount_textView);
 
         mRequestDeclineButton.setVisibility(View.INVISIBLE);
         mRequestDeclineButton.setEnabled(false);
@@ -72,6 +75,25 @@ public class ProfileActivity extends AppCompatActivity {
         mProgressdialog.setMessage("Want to have candle light dinner with your friend?");
         mProgressdialog.setCanceledOnTouchOutside(false);
         mProgressdialog.show();
+
+
+        //show full screen image
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(800); // Optional
+        imagePopup.setWindowWidth(800); // Optional
+        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+        imagePopup.setFullScreen(true); // Optional
+        imagePopup.setHideCloseIcon(true);  // Optional
+        imagePopup.setImageOnClickClose(true);// Optional
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(mProfileImage.getDrawable());
+                imagePopup.viewPopup();
+
+            }
+        });
 
         mUsersDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -89,6 +111,20 @@ public class ProfileActivity extends AppCompatActivity {
                     mRequestDeclineButton.setVisibility(View.INVISIBLE);
                     mProfileSendRequestButton.setVisibility(View.INVISIBLE);
                 }
+
+                //count friendsfor the selected profile
+                mFriendDatabase.child(selected_user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int friendsCount = (int) dataSnapshot.getChildrenCount();
+                        mProfileFriendsCount.setText("Total friends : " + friendsCount);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 //
                 mFriendRequestDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,6 +155,7 @@ public class ProfileActivity extends AppCompatActivity {
                                             if (dataSnapshot.hasChild(selected_user_id)) {
                                                 current_state = "friends";
                                                 mProfileSendRequestButton.setText("Un Friend");
+
 
                                                 mRequestDeclineButton.setVisibility(View.INVISIBLE);
                                                 mRequestDeclineButton.setEnabled(false);

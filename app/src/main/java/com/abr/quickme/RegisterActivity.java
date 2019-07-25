@@ -107,7 +107,6 @@ public class RegisterActivity extends AppCompatActivity {
                             mRegProgress.hide();
                             Toast.makeText(RegisterActivity.this, "Error Creating Account", Toast.LENGTH_SHORT).show();
                         }
-
                         // ...
                     }
                 });

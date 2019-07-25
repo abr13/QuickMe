@@ -123,7 +123,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     long lastTime = Long.parseLong(online);
 
-                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
 
                     mLastSeenView.setText("last seen " + lastSeenTime);
                 }
@@ -175,6 +175,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
+        //show full screen image
         final ImagePopup imagePopup = new ImagePopup(this);
         imagePopup.setWindowHeight(800); // Optional
         imagePopup.setWindowWidth(800); // Optional

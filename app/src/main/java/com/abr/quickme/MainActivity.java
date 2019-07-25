@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mUserOnline;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             sentToStart();
         }
+
 
         Toolbar mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);

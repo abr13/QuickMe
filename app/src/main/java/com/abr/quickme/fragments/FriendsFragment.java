@@ -192,7 +192,7 @@ public class FriendsFragment extends Fragment {
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("Lastseen : " + lastSeenTime);
+                userLastseen.setText("last seen : " + lastSeenTime);
             }
         }
     }

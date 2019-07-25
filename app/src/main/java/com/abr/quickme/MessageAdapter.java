@@ -61,7 +61,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CharSequence options[] = new CharSequence[]{"Delete Chat"};
+                CharSequence options[] = new CharSequence[]{"Delete message"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
                 builder.setTitle("Chat option");
                 builder.setItems(options, new DialogInterface.OnClickListener() {

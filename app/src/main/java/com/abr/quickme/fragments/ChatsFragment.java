@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +24,7 @@ import com.abr.quickme.R;
 import com.abr.quickme.models.Chats;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -125,29 +127,29 @@ public class ChatsFragment extends Fragment {
                                         if (which == 0) {
                                             final DatabaseReference mRootRef;
                                             mRootRef = FirebaseDatabase.getInstance().getReference();
-//                                            mRootRef.child("Messages").child(mCurrentUserId).child(listUserId).removeValue()
-//                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                        @Override
-//                                                        public void onSuccess(Void aVoid) {
-//                                                            mRootRef.child("Messages").child(listUserId).child(mCurrentUserId).removeValue()
-//                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                                        @Override
-//                                                                        public void onSuccess(Void aVoid) {
-//                                                                            mRootRef.child("Chat").child(mCurrentUserId).child(listUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                                                @Override
-//                                                                                public void onSuccess(Void aVoid) {
-//                                                                                    mRootRef.child("Chat").child(listUserId).child(mCurrentUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                                                        @Override
-//                                                                                        public void onSuccess(Void aVoid) {
-//                                                                                            Toast.makeText(getContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
-//                                                                                        }
-//                                                                                    });
-//                                                                                }
-//                                                                            });
-//                                                                        }
-//                                                                    });
-//                                                        }
-//                                                    });
+                                            mRootRef.child("Messages").child(mCurrentUserId).child(listUserId).removeValue()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            mRootRef.child("Messages").child(listUserId).child(mCurrentUserId).removeValue()
+                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        @Override
+                                                                        public void onSuccess(Void aVoid) {
+                                                                            mRootRef.child("Chat").child(listUserId).child(mCurrentUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    mRootRef.child("Chat").child(mCurrentUserId).child(listUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(Void aVoid) {
+                                                                                            Toast.makeText(getContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    });
+                                                        }
+                                                    });
                                         }
                                     }
                                 });

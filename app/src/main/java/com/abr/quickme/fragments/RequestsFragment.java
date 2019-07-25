@@ -101,15 +101,15 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                         getTypeRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Log.d(TAG, "onDataChange: TEST");
+                                Log.d(TAG, "onDataChange: TEST" + i);
                                 if (dataSnapshot.exists()) {
                                     String type = dataSnapshot.getValue().toString();
                                     if (type.equals("received")) {
                                         mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                final String name = dataSnapshot.child("name").getValue().toString();
-                                                final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                                                String name = dataSnapshot.child("name").getValue().toString();
+                                                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                                                 requestsViewHolder.setName(name);
                                                 requestsViewHolder.setThumb_image(thumb_image);
@@ -147,7 +147,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                                                                                                     @Override
                                                                                                                     public void onSuccess(Void aVoid) {
 
-                                                                                                                        Toast.makeText(getContext(), "Hohoo, Accepted, Party Started " + name, Toast.LENGTH_LONG).show();
+                                                                                                                        Toast.makeText(getContext(), "Hohoo, Accepted, Party Started ", Toast.LENGTH_LONG).show();
                                                                                                                     }
                                                                                                                 });
                                                                                                     }
@@ -175,7 +175,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                                                                         @Override
                                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                                             if (task.isSuccessful()) {
-                                                                                                Toast.makeText(getContext(), "Request Declined, you're rud! " + name, Toast.LENGTH_LONG).show();
+                                                                                                Toast.makeText(getContext(), "Request Declined, you're rud! ", Toast.LENGTH_LONG).show();
                                                                                             }
                                                                                         }
                                                                                     });
@@ -196,8 +196,8 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                         mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                final String name = dataSnapshot.child("name").getValue().toString();
-                                                final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+                                                String name = dataSnapshot.child("name").getValue().toString();
+                                                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                                                 requestsViewHolder.setName(name);
                                                 requestsViewHolder.setThumb_image(thumb_image);
@@ -218,7 +218,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
-                                                                                        Toast.makeText(getContext(), "Request Cancelled, you're rud! " + name, Toast.LENGTH_LONG).show();
+                                                                                        Toast.makeText(getContext(), "Request Cancelled, you're rud! ", Toast.LENGTH_LONG).show();
                                                                                     }
                                                                                 });
                                                                     }
@@ -257,6 +257,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
 
         mFriendReqsList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
+        firebaseRecyclerAdapter.notifyDataSetChanged();
 
     }
 
@@ -265,7 +266,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public static class requestsViewHolder extends RecyclerView.ViewHolder {
+    public class requestsViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
         requestsViewHolder(View itemView) {
