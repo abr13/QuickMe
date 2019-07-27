@@ -101,7 +101,9 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                         getTypeRef.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                                 Log.d(TAG, "onDataChange: TEST" + i);
+
                                 if (dataSnapshot.exists()) {
                                     String type = dataSnapshot.getValue().toString();
                                     if (type.equals("received")) {

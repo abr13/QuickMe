@@ -32,7 +32,7 @@
         android:layout_marginBottom="2dp"
         android:paddingLeft="30dp"
         android:paddingRight="15dp"
-        android:textColor="#000"
+        android:textColor="#fff"
         android:textSize="10sp"
         tools:text="2019/07/15 20:55:35" />
 

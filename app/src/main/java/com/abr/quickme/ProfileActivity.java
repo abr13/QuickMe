@@ -104,7 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 mProfileName.setText(displayName);
                 mProfileStatus.setText(status);
-                Picasso.get().load(image).placeholder(R.drawable.profile_sample2).into(mProfileImage);
+                Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mProfileImage);
 
                 //prevent sending request to current user itself
                 if (mCurrentUser.getUid().equals(selected_user_id)) {

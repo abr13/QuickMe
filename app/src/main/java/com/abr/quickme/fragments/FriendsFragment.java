@@ -66,9 +66,9 @@ public class FriendsFragment extends Fragment {
         mCurrentUserId = mAuth.getCurrentUser().getUid();
 
         mFriendsDatabase = FirebaseDatabase.getInstance().getReference().child("Friends").child(mCurrentUserId);
-        mFriendsDatabase.keepSynced(true);
+        //mFriendsDatabase.keepSynced(true);
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-        mUsersDatabase.keepSynced(true);
+        //mUsersDatabase.keepSynced(true);
 
         mFriendsList.setHasFixedSize(true);
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -81,7 +81,8 @@ public class FriendsFragment extends Fragment {
         super.onStart();
 
         FirebaseRecyclerOptions<Friends> options =
-                new FirebaseRecyclerOptions.Builder<Friends>()
+                new FirebaseRecyclerOptions
+                        .Builder<Friends>()
                         .setQuery(mFriendsDatabase, Friends.class)
                         .build();
         FirebaseRecyclerAdapter<Friends, friendsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Friends, friendsViewHolder>(options) {

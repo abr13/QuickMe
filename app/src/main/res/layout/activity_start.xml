@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/start_backgroung"
     tools:context=".StartActivity">
 
     <LinearLayout
@@ -22,18 +23,23 @@
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:background="@drawable/button_background"
             android:text="Already Have an Account ?" />
 
         <Button
             android:id="@+id/btn_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:background="@drawable/button_background"
             android:text="Create an Account" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btn_gsignin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp" />
     </LinearLayout>
 
 </RelativeLayout>

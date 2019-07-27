@@ -37,6 +37,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
         android:padding="12dp"
+        android:background="@drawable/button_background"
+        android:paddingRight="10dp"
         android:text="Change Status" />
 
 </RelativeLayout>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_bright"
+    android:background="#fff"
     tools:context=".ProfileSettingsActivity">
 
     <include
@@ -22,9 +21,7 @@
         android:layout_marginTop="100dp"
         android:layout_marginEnd="120dp"
         android:padding="2dp"
-        android:src="@drawable/profile_sample"
-        app:civ_border_color="#E91E63"
-        app:civ_border_width="3dp" />
+        android:src="@drawable/profile_sample" />
 
     <TextView
         android:id="@+id/settings_displayName"
@@ -32,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="302dp"
+        android:layout_marginTop="290dp"
         android:layout_marginBottom="19dp"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
@@ -61,8 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="180dp"
-        android:backgroundTint="@color/colorAccent"
+        android:layout_marginBottom="190dp"
+        android:background="@drawable/button_background"
+        android:padding="10dp"
         android:text="Change Profile Picture" />
 
     <Button
@@ -72,7 +70,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="130dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:background="@drawable/button_background"
+        android:padding="10dp"
         android:text="Change Status" />
 
 
