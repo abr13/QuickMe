@@ -1,5 +1,7 @@
 package com.abr.quickme;
 
+import android.annotation.TargetApi;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +31,7 @@ public class MessageEncryption {
         }
     }
 
+    @TargetApi(26)
     public static String encrypt(String strToEncrypt, String secret) {
         try {
             setKey(secret);
@@ -41,6 +44,7 @@ public class MessageEncryption {
         return null;
     }
 
+    @TargetApi(26)
     public static String decrypt(String strToDecrypt, String secret) {
         try {
             setKey(secret);

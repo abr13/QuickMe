@@ -1,10 +1,12 @@
 package com.abr.quickme;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -246,6 +248,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private void sendMessage() {
 
         String message = mChatMessageView.getText().toString();
@@ -327,5 +330,4 @@ public class ChatActivity extends AppCompatActivity {
     private void loadMoreMessages() {
 
     }
-
 }

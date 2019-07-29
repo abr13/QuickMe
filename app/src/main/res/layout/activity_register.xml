@@ -12,9 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="24dp"
-        android:paddingTop="56dp"
-        android:paddingRight="24dp">
+        android:layout_below="@id/register_toolbar"
+        android:paddingLeft="50dp"
+        android:paddingTop="20dp"
+        android:paddingRight="50dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -69,23 +70,26 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Signup Button -->
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:background="@drawable/button_background"
             android:text="Create Account"
             android:textColor="#000" />
 
         <TextView
+            android:id="@+id/alreadyAccount"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:gravity="center"
             android:text="Already a member? Login"
+            android:clickable="true"
+            android:onClick="onClick"
+            android:textColor="#00a"
             android:textSize="16dp" />
 
     </LinearLayout>
