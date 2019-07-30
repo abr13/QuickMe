@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.abr.quickme.classes.GetTimeAgo;
+import com.abr.quickme.classes.MessageEncryption;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.firebase.auth.FirebaseAuth;

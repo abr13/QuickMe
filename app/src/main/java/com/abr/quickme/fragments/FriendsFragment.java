@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.ChatActivity;
-import com.abr.quickme.GetTimeAgo;
 import com.abr.quickme.ProfileActivity;
 import com.abr.quickme.R;
+import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.models.Friends;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -61,6 +62,8 @@ public class FriendsFragment extends Fragment {
 
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
         mFriendsList = mMainView.findViewById(R.id.friends_list_recycler);
+
+        mFriendsList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).size(1).margin(250, 10).build());
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();

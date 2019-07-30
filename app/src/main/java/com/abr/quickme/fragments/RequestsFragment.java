@@ -2,11 +2,9 @@ package com.abr.quickme.fragments;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +20,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,12 +40,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RequestsFragment extends Fragment implements View.OnClickListener {
-
+public class RequestsFragment extends Fragment {
 
     private static final String TAG = "REQUEST";
-    Button reqAcceptBtn, reqDeclineBtn;
-    String listUserId;
     private RecyclerView mFriendReqsList;
     private DatabaseReference mFriendReqDatabase, mUsersDatabase;
     private FirebaseAuth mAuth;
@@ -65,6 +62,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
         mMainView = inflater.inflate(R.layout.fragment_requests, container, false);
         mFriendReqsList = mMainView.findViewById(R.id.requests_list_recycler);
 
+        mFriendReqsList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).size(1).margin(200, 150).build());
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
@@ -91,39 +89,39 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                 new FirebaseRecyclerOptions.Builder<Requests>()
                         .setQuery(mFriendReqDatabase, Requests.class)
                         .build();
-        final FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<Requests, RequestsFragment.requestsViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull final requestsViewHolder requestsViewHolder, final int i, @NonNull Requests requests) {
-                        listUserId = getRef(i).getKey();
-                        getTypeRef = getRef(i).child("request_type").getRef();
 
+        FirebaseRecyclerAdapter<Requests, requestsViewHolder> adapter =
+                new FirebaseRecyclerAdapter<Requests, requestsViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull final requestsViewHolder holder, int position, @NonNull Requests model) {
+                        holder.reqAcceptBtn.setVisibility(View.VISIBLE);
+                        holder.reqDeclineBtn.setVisibility(View.VISIBLE);
+
+                        final String listUserId = getRef(position).getKey(); // Gets Chatrequest / userID / first item.
+
+                        final DatabaseReference getTypeRef = getRef(position).child("request_type").getRef();
                         getTypeRef.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                Log.d(TAG, "onDataChange: TEST" + i);
-
+                            public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     String type = dataSnapshot.getValue().toString();
+
                                     if (type.equals("received")) {
                                         mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                                             @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
                                                 String name = dataSnapshot.child("name").getValue().toString();
                                                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
-                                                requestsViewHolder.setName(name);
-                                                requestsViewHolder.setThumb_image(thumb_image);
-                                                requestsViewHolder.setReqType("Request Received");
+                                                Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(holder.imageView);
+                                                holder.userNameView.setText(name);
+                                                holder.reqType.setText("Request received");
 
-                                                reqAcceptBtn = requestsViewHolder.itemView.findViewById(R.id.req_accept_btn);
-                                                reqAcceptBtn.setText("Accept");
-                                                reqDeclineBtn = requestsViewHolder.itemView.findViewById(R.id.req_decline_btn);
-                                                reqDeclineBtn.setText("Decline");
+                                                holder.reqAcceptBtn.setText("Accept");
+                                                holder.reqDeclineBtn.setText("Decline");
 
                                                 //Accept request
-                                                reqAcceptBtn.setOnClickListener(new View.OnClickListener() {
+                                                holder.reqAcceptBtn.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v) {
                                                         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -164,7 +162,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                                 });
 
                                                 //Decline Request
-                                                reqDeclineBtn.setOnClickListener(new View.OnClickListener() {
+                                                holder.reqDeclineBtn.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v) {
                                                         mFriendRequestDatabase.child(mCurrentUserId).child(listUserId).removeValue()
@@ -190,7 +188,7 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                             }
 
                                             @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            public void onCancelled(DatabaseError databaseError) {
 
                                             }
                                         });
@@ -201,15 +199,14 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                                 String name = dataSnapshot.child("name").getValue().toString();
                                                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
-                                                requestsViewHolder.setName(name);
-                                                requestsViewHolder.setThumb_image(thumb_image);
-                                                requestsViewHolder.setReqType("Request Sent");
+                                                Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(holder.imageView);
+                                                holder.userNameView.setText(name);
+                                                holder.reqType.setText("Request sent");
 
-                                                requestsViewHolder.itemView.findViewById(R.id.req_accept_btn).setVisibility(View.INVISIBLE);
-                                                reqDeclineBtn = requestsViewHolder.itemView.findViewById(R.id.req_decline_btn);
-                                                reqDeclineBtn.setText("Cancel Request ");
+                                                holder.reqAcceptBtn.setVisibility(View.INVISIBLE);
+                                                holder.reqDeclineBtn.setText("Cancel");
 
-                                                reqDeclineBtn.setOnClickListener(new View.OnClickListener() {
+                                                holder.reqDeclineBtn.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v) {
                                                         mFriendRequestDatabase.child(mCurrentUserId).child(listUserId).removeValue()
@@ -236,11 +233,12 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
                                             }
                                         });
                                     }
+
                                 }
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            public void onCancelled(DatabaseError databaseError) {
 
                             }
                         });
@@ -248,48 +246,34 @@ public class RequestsFragment extends Fragment implements View.OnClickListener {
 
                     @NonNull
                     @Override
-                    public RequestsFragment.requestsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.single_request_layout, parent, false);
-
-                        return new RequestsFragment.requestsViewHolder(view);
+                    public requestsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.single_request_layout, viewGroup, false);
+                        requestsViewHolder holder = new requestsViewHolder(view);
+                        return holder;
                     }
-
                 };
 
-        mFriendReqsList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
-        firebaseRecyclerAdapter.notifyDataSetChanged();
+        mFriendReqsList.setAdapter(adapter);
+        adapter.startListening();
 
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 
     public class requestsViewHolder extends RecyclerView.ViewHolder {
-        View mView;
 
-        requestsViewHolder(View itemView) {
+        TextView userNameView, reqType;
+        CircleImageView imageView;
+        MaterialButton reqAcceptBtn, reqDeclineBtn;
+
+        public requestsViewHolder(@NonNull View itemView) {
             super(itemView);
-            mView = itemView;
 
-        }
+            userNameView = itemView.findViewById(R.id.req_single_name);
+            imageView = itemView.findViewById(R.id.req_single_image);
+            reqType = itemView.findViewById(R.id.req_type);
+            reqAcceptBtn = itemView.findViewById(R.id.req_accept_btn);
+            reqDeclineBtn = itemView.findViewById(R.id.req_decline_btn);
 
-        void setName(String name) {
-            TextView userNameView = mView.findViewById(R.id.req_single_name);
-            userNameView.setText(name);
-        }
-
-        void setThumb_image(String thumb_image) {
-            CircleImageView imageView = mView.findViewById(R.id.req_single_image);
-            Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(imageView);
-        }
-
-        void setReqType(String requestType) {
-            TextView reqType = mView.findViewById(R.id.req_type);
-            reqType.setText(requestType);
         }
     }
 }

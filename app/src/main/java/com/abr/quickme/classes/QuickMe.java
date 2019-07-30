@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.classes;
 
 import android.app.Application;
 

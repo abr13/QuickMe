@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.ChatActivity;
-import com.abr.quickme.GetTimeAgo;
 import com.abr.quickme.R;
+import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.models.Chats;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -62,6 +63,8 @@ public class ChatsFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainView = inflater.inflate(R.layout.fragment_chats, container, false);
         mChatsList = mMainView.findViewById(R.id.chats_list_recycler);
+
+        mChatsList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).size(1).margin(250, 10).build());
 
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();

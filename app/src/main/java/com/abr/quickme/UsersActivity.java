@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,6 +43,8 @@ public class UsersActivity extends AppCompatActivity {
 
         mUsersList = findViewById(R.id.users_list);
         mToolbar = findViewById(R.id.users_appbar);
+
+        mUsersList.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).size(1).margin(250, 10).build());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("All Users");

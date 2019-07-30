@@ -1,9 +1,10 @@
 package com.abr.quickme;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,13 +12,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AccountRecoveryActivity extends AppCompatActivity {
 
-    Button resetBtn;
+    MaterialButton resetBtn;
     TextInputLayout emailText;
     Toolbar mToolbar;
 
@@ -34,6 +36,31 @@ public class AccountRecoveryActivity extends AppCompatActivity {
 
         resetBtn = findViewById(R.id.reset_btn);
         emailText = findViewById(R.id.resetEmail);
+
+
+        final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
+        emailText.getEditText().addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // other stuffs
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String email = emailText.getEditText().getText().toString().trim();
+                // other stuffs
+                if (email.matches(emailPattern)) {
+                    resetBtn.setEnabled(true);
+                } else {
+                    emailText.getEditText().setError("Invalid email");
+                    resetBtn.setEnabled(false);
+                }
+            }
+        });
 
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override

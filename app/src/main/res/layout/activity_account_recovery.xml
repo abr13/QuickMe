@@ -39,16 +39,14 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/reset_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:background="#18445E"
             android:padding="12dp"
-            android:text="Send Password Reset email"
-            android:textColor="#FFF" />
+            android:text="Send Password Reset email" />
 
     </LinearLayout>
 

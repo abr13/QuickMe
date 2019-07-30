@@ -1,75 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
 
-    <RelativeLayout
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/req_single_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/profile_sample" />
+
+    <TextView
+        android:id="@+id/req_single_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="109dp"
+        android:layout_marginTop="15dp"
+        android:text="Display Name"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/req_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/req_single_name"
+        android:layout_alignStart="@+id/req_single_name"
+        android:layout_marginTop="-1dp"
+        android:text="Req_type"
+        android:textSize="14sp" />
+
+
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="311dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="60dp"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/req_accept_btn"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="#0c0"
+            android:padding="10dp"
+            android:text="Accept"
+            android:textColor="#fff" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/req_decline_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Decline"
+            android:textColor="#f00"
+            app:rippleColor="#f00" />
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/req_single_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:src="@drawable/profile_sample" />
-
-        <TextView
-            android:id="@+id/req_single_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="109dp"
-            android:layout_marginTop="15dp"
-            android:text="Display Name"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/req_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/req_single_name"
-            android:layout_alignStart="@+id/req_single_name"
-            android:layout_marginTop="-1dp"
-            android:text="Req_type"
-            android:textSize="14sp" />
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="95dp"
-            android:layout_marginTop="60dp"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <Button
-                android:id="@+id/req_accept_btn"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="#4AB921"
-                android:padding="10dp"
-                android:text="Accept"
-                android:textColor="#fff" />
-
-            <Button
-                android:id="@+id/req_decline_btn"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="#C72034"
-                android:padding="10dp"
-                android:text="Decline"
-                android:textColor="#fff" />
-        </LinearLayout>
-
-    </RelativeLayout>
+        android:layout_height="2dp"
+        android:layout_below="@id/linear"
+        android:layout_marginTop="1dp" />
 
 </RelativeLayout>
