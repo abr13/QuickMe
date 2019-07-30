@@ -94,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = textName.getEditText().getText().toString();
                 String password = textPassword.getEditText().getText().toString();
+                String email = textEmail.getEditText().getText().toString();
 
                 if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
                     mRegProgress.setTitle("Registering User");

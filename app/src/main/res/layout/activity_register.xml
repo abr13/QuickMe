@@ -11,18 +11,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/register_toolbar"
+        android:orientation="vertical"
         android:paddingLeft="50dp"
         android:paddingTop="20dp"
         android:paddingRight="50dp">
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="72dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_launcher_background" />
+            android:src="@drawable/qm_logo" />
 
         <!--  Name Label -->
         <com.google.android.material.textfield.TextInputLayout
@@ -85,10 +85,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:gravity="center"
-            android:text="Already a member? Login"
             android:clickable="true"
+            android:gravity="center"
             android:onClick="onClick"
+            android:text="Already a member? Login"
             android:textColor="#00a"
             android:textSize="16dp" />
 

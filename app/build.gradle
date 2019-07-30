@@ -42,5 +42,7 @@ dependencies {
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.github.chathuralakmal:AndroidImagePopup:1.2.1'
     compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
 
 }
