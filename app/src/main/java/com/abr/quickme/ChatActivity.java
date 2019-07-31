@@ -1,14 +1,9 @@
 package com.abr.quickme;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.abr.quickme.classes.GetTimeAgo;
-import com.abr.quickme.classes.MessageEncryption;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,8 +33,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.scottyab.aescrypt.AESCrypt;
 import com.squareup.picasso.Picasso;
 
+import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +66,72 @@ public class ChatActivity extends AppCompatActivity {
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
     private int mCurrentPage = 1;
+
+    // function to generate a random string of length n (encryption key)
+    static String getAlphaNumericString(int n) {
+
+        // chose a Character random from this String
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int) (AlphaNumericString.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    private void loadMessages() {
+
+        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
+
+        Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+
+        messageQuary.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Messages message = dataSnapshot.getValue(Messages.class);
+                messagesList.add(message);
+                mAdapter.notifyDataSetChanged();
+
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
+                mRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +192,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     long lastTime = Long.parseLong(online);
 
-                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
 
                     mLastSeenView.setText("last seen " + lastSeenTime);
                 }
@@ -211,46 +273,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void loadMessages() {
-
-        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
-
-        Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
-
-        messageQuary.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Messages message = dataSnapshot.getValue(Messages.class);
-                messagesList.add(message);
-                mAdapter.notifyDataSetChanged();
-
-                mMessagesList.scrollToPosition(messagesList.size() - 1);
-                mRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
     private void sendMessage() {
 
         String message = mChatMessageView.getText().toString();
@@ -272,33 +294,42 @@ public class ChatActivity extends AppCompatActivity {
 //            byte[] b=me.encrypt(message.getBytes());
 //            String encrypted= MessageEncryption.bytesToString(b);
 //            Log.d(TAG, "sendMessage: "+encrypted);
-            MessageEncryption me = new MessageEncryption();
+            //MessageEncryption me = new MessageEncryption();
 
-            TelephonyManager telephonyManager;
-            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    Activity#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for Activity#requestPermissions for more details.
-                return;
+//            TelephonyManager telephonyManager;
+//            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    Activity#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for Activity#requestPermissions for more details.
+//                return;
+//            }
+//            String device_id = telephonyManager.getDeviceId();
+
+            //String m = me.encrypt(message, device_id);
+            //Log.d(TAG, "sendMessage: " + m + "///" + device_id);
+            String key = getAlphaNumericString(20);
+            String encryptedMsg = "";
+
+            try {
+                encryptedMsg = AESCrypt.encrypt(key, message.trim());
+                Log.d(TAG, "sendMessage: " + encryptedMsg);
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
             }
-            String device_id = telephonyManager.getDeviceId();
-
-            String m = me.encrypt(message, device_id);
-            Log.d(TAG, "sendMessage: " + m + "///" + device_id);
 
             Map messageMap = new HashMap();
-            messageMap.put("message", m);
+            messageMap.put("message", encryptedMsg);
             messageMap.put("seen", "false");
             messageMap.put("type", "text");
             messageMap.put("time", currentDateTime);
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
-            messageMap.put("key", device_id);
+            messageMap.put("key", key);
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);

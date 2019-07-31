@@ -10,7 +10,7 @@
         android:id="@+id/register_toolbar"
         layout="@layout/app_bar_layout" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_changePasswordPage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:background="#18445E"
         android:padding="12dp"
         android:text="Change Password"
-        android:textColor="#FFF"
+        android:textColor="#000"
         app:layout_constraintEnd_toEndOf="@+id/register_toolbar"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

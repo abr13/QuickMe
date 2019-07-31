@@ -42,7 +42,8 @@
             android:layout_weight="1"
             app:buttonSize="icon_only" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebookSigninBtn"
             android:layout_width="100dp"
             android:layout_height="60dp"
             android:layout_margin="5dp"

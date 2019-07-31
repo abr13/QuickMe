@@ -2,6 +2,7 @@ package com.abr.quickme;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.abr.quickme.classes.MessageEncryption;
 import com.abr.quickme.models.Messages;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.scottyab.aescrypt.AESCrypt;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
@@ -59,15 +62,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //        byte[] decrypted=de.decrypt(m,new BigInteger(message.getKey()));
 //        Log.d(TAG, "onBindViewHolder: "+new String(decrypted));
 
-        MessageEncryption de = new MessageEncryption();
-        String d = de.decrypt(message.getMessage(), message.getKey());
+        //MessageEncryption de = new MessageEncryption();
+        //String d = de.decrypt(message.getMessage(), message.getKey());
+        String messageAfterDecrypt = "";
+        try {
+            messageAfterDecrypt = AESCrypt.decrypt(message.getKey(), message.getMessage());
+            Log.d("", "onBindViewHolder: " + messageAfterDecrypt);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
 
-        holder.messageText.setText(d);
+        holder.messageText.setText(messageAfterDecrypt);
         holder.timeText.setText(message.getTime());
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CharSequence options[] = new CharSequence[]{"Delete message"};
+                CharSequence[] options = new CharSequence[]{"Edit message"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
                 builder.setTitle("Chat option");
                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -75,6 +85,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
                             final DatabaseReference mRootRef;
+                            mRootRef = FirebaseDatabase.getInstance().getReference();
+                            mRootRef.child("Messages").child(Cuser.getUid()).child(from_user);
 
                         }
                     }

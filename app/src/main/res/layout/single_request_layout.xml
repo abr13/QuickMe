@@ -36,7 +36,6 @@
         android:text="Req_type"
         android:textSize="14sp" />
 
-
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="311dp"
