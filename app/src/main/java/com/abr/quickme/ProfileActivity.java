@@ -53,9 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private DatabaseReference mUsersDatabase, mFriendRequestDatabase, mFriendDatabase, mNotificationDatabase;
 
-    BitmapDrawable drawable;
-    Bitmap bitmap;
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.saveProfilePic) {
@@ -65,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             FileOutputStream outStream = null;
             File sdCard = Environment.getExternalStorageDirectory();
-            File dir = new File(sdCard.getAbsolutePath() + "/Quick Me/Profile Pictures");
+            File dir = new File(sdCard.getAbsolutePath() + "/Quick Me/Quick Me Profile Photos");
             dir.mkdirs();
             String fileName = String.format("%s.jpg", mProfileName.getText().toString() + "_" + System.currentTimeMillis());
             File outFile = new File(dir, fileName);
@@ -81,13 +78,12 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
 
             } catch (FileNotFoundException e) {
-                Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error, File not found!", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             } catch (IOException e) {
                 Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
-
 
             return true;
         } else {
