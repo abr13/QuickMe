@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Quick Me</string>
 
+    <string name="facebook_app_id">2307451469520460</string>
+    <string name="fb_login_protocol_scheme">fb2307451469520460</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

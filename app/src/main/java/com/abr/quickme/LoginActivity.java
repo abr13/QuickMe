@@ -14,6 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.request.RequestOptions;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,11 +36,18 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -44,10 +60,12 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     int RC_SIGN_IN = 0;
     private String email;
-    private ProgressDialog mRegProgress, mRegProgress1;
+    CallbackManager mCallbackManager;
     private SignInButton googleSigninBtn;
+    private ProgressDialog mRegProgress, mRegProgress1, mRegProgress2;
     private GoogleSignInClient mGoogleSignInClient;
     private DatabaseReference mDatabase;
+    private LoginButton facebookSigninBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mRegProgress = new ProgressDialog(this);
         mRegProgress1 = new ProgressDialog(this);
-
+        mRegProgress2 = new ProgressDialog(this);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -70,6 +88,43 @@ public class LoginActivity extends AppCompatActivity {
 
         googleSigninBtn = findViewById(R.id.googleSigninBtn);
         googleSigninBtn.setSize(SignInButton.SIZE_ICON_ONLY);
+
+        facebookSigninBtn = findViewById(R.id.facebookSigninBtn);
+
+        mCallbackManager = CallbackManager.Factory.create();
+        //check login for facebook
+
+        facebookSigninBtn.setReadPermissions("email", "public_profile");
+        // If you are using in a fragment, call loginButton.setFragment(this);
+
+        // Callback registration
+        facebookSigninBtn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+
+                mRegProgress2.setTitle("Signing with Facebook...");
+                mRegProgress2.setMessage("Your coffee is getting ready !");
+                mRegProgress2.setCanceledOnTouchOutside(false);
+                mRegProgress2.show();
+
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+                // ...
+            }
+        });
+// ...
+
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -170,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -201,28 +257,45 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "Google signin success", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            String name = user.getDisplayName();
-                            String image = user.getPhotoUrl().toString();
+                            final String name = user.getDisplayName();
+                            final String image = user.getPhotoUrl().toString();
                             String uid = user.getUid();
 
                             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-
-                            HashMap<String, String> userMap = new HashMap<>();
-                            userMap.put("name", name);
-                            userMap.put("status", "It's Quick Messaging, Make it Quick!");
-                            userMap.put("image", image);
-                            userMap.put("thumb_image", "default");
-
-                            mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
                                         mRegProgress.dismiss();
                                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(mainIntent);
                                         finish();
+                                    } else {
+                                        HashMap<String, String> userMap = new HashMap<>();
+                                        userMap.put("name", name);
+                                        userMap.put("status", "It's Quick Messaging, Make it Quick!");
+                                        userMap.put("image", image);
+                                        userMap.put("thumb_image", "default");
+
+                                        mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    mRegProgress.dismiss();
+                                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(mainIntent);
+                                                    finish();
+                                                }
+                                            }
+                                        });
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                 }
                             });
 
@@ -250,5 +323,110 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(newAccountIntent);
         }
     }
+
+    //facebook
+
+
+    private void handleFacebookAccessToken(final AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            loadUserProfile(token, user.getUid());
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            mRegProgress.dismiss();
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+
+    private void loadUserProfile(AccessToken newAccessToken, final String uid) {
+        GraphRequest request = GraphRequest.newMeRequest(newAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object, GraphResponse response) {
+                try {
+                    final String first_name = object.getString("first_name");
+                    final String last_name = object.getString("last_name");
+                    String email = object.getString("email");
+                    String id = object.getString("id");
+                    final String image_url = "https://graph.facebook.com/" + id + "/picture?type=normal";
+
+                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                    mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                mRegProgress.dismiss();
+                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(mainIntent);
+                                finish();
+                            } else {
+                                HashMap<String, String> userMap = new HashMap<>();
+                                userMap.put("name", first_name + " " + last_name);
+                                userMap.put("status", "It's Quick Messaging, Make it Quick!");
+                                userMap.put("image", image_url);
+                                userMap.put("thumb_image", "default");
+
+                                mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            mRegProgress.dismiss();
+                                            mRegProgress.dismiss();
+                                            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(mainIntent);
+                                            finish();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.dontAnimate();
+
+
+                } catch (JSONException e) {
+                    mRegProgress.dismiss();
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "first_name,last_name,email,id");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+
+    //faceboob
 
 }
