@@ -21,6 +21,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -56,11 +57,11 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LOGIN";
     TextInputLayout textlogEmail, textlogPassword;
     MaterialButton btn_login;
+    int RC_SIGN_IN = 0;
+    CallbackManager mCallbackManager;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
-    int RC_SIGN_IN = 0;
     private String email;
-    CallbackManager mCallbackManager;
     private SignInButton googleSigninBtn;
     private ProgressDialog mRegProgress, mRegProgress1, mRegProgress2;
     private GoogleSignInClient mGoogleSignInClient;
@@ -87,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
 
         googleSigninBtn = findViewById(R.id.googleSigninBtn);
-        googleSigninBtn.setSize(SignInButton.SIZE_ICON_ONLY);
 
         facebookSigninBtn = findViewById(R.id.facebookSigninBtn);
 
@@ -191,12 +191,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //google signin
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }
 
+    //normal signin
     private void signin_user(String email, String password, final View v) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -212,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
-                            mRegProgress.hide();
+                            mRegProgress.dismiss();
                             Snackbar snackbar_su = Snackbar.make(v, "Something is wrong!", Snackbar.LENGTH_LONG);
                             snackbar_su.show();
                         }
@@ -243,6 +245,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    //google
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -266,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
-                                        mRegProgress.dismiss();
+                                        mRegProgress1.dismiss();
                                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(mainIntent);
@@ -295,7 +298,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                    mRegProgress1.dismiss();
                                 }
                             });
 
@@ -345,10 +348,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
+                            mRegProgress2.dismiss();
+                            LoginManager.getInstance().logOut();
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            mRegProgress.dismiss();
+                            Toast.makeText(LoginActivity.this, "Authentication failed.\nAccount may already exists with the same email address but different sign-in credentials.",
+                                    Toast.LENGTH_LONG).show();
                         }
 
                         // ...
@@ -373,7 +377,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                mRegProgress.dismiss();
+                                mRegProgress2.dismiss();
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(mainIntent);
@@ -389,8 +393,7 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            mRegProgress.dismiss();
-                                            mRegProgress.dismiss();
+                                            mRegProgress2.dismiss();
                                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                             mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(mainIntent);
@@ -403,7 +406,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            mRegProgress2.dismiss();
                         }
                     });
 
@@ -413,17 +416,17 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 } catch (JSONException e) {
-                    mRegProgress.dismiss();
+                    mRegProgress2.dismiss();
                     e.printStackTrace();
                 }
 
             }
         });
 
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "first_name,last_name,email,id");
-        request.setParameters(parameters);
-        request.executeAsync();
+//        Bundle parameters = new Bundle();
+//        parameters.putString("fields", "first_name,last_name,email,id");
+//        request.setParameters(parameters);
+//        request.executeAsync();
 
     }
 

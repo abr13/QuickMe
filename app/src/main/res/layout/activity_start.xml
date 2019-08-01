@@ -6,23 +6,25 @@
     android:background="@drawable/start_backgroung"
     tools:context=".StartActivity">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/qm_logo" />
+        android:layout_marginTop="100dp"
+        android:src="@drawable/logo" />
 
     <TextView
+        android:id="@+id/tagLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo"
         android:layout_centerHorizontal="true"
-        android:text="Quick Me"
-        android:textColor="#67b300"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="5dp"
+        android:text="It's Quick Messaging,\nMake it Quick!"
+        android:textAlignment="center"
+        android:textColor="#a2cd2c"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

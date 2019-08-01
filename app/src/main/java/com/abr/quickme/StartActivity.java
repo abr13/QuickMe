@@ -3,28 +3,36 @@ package com.abr.quickme;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.auth.FirebaseAuth;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StartActivity extends AppCompatActivity {
 
-    private static final String TAG = "StartActivity";
     MaterialButton btn_create, btn_login;
-
-    private FirebaseAuth mAuth;
+    CircleImageView logo;
+    TextView tagLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        mAuth = FirebaseAuth.getInstance();
-
         btn_create = findViewById(R.id.btn_create);
         btn_login = findViewById(R.id.btn_login);
+
+        logo = findViewById(R.id.logo);
+        tagLine = findViewById(R.id.tagLine);
+
+        Animation myanim = AnimationUtils.loadAnimation(this, R.anim.start_transition);
+        logo.startAnimation(myanim);
+        tagLine.startAnimation(myanim);
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
