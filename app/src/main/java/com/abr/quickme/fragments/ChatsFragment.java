@@ -22,10 +22,12 @@ import com.abr.quickme.ChatActivity;
 import com.abr.quickme.R;
 import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.models.Chats;
+import com.abr.quickme.models.Messages;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +53,7 @@ public class ChatsFragment extends Fragment {
 
     private View mMainView;
 
+    private String thelastMessage;
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -94,6 +97,11 @@ public class ChatsFragment extends Fragment {
 
                 final String listUserId = getRef(i).getKey();
 
+                //last message
+//                chatsViewHolder.layout_last_message.setEnabled(true);
+//                chatsViewHolder.layout_last_message.setVisibility(View.VISIBLE);
+//                lastMessage(listUserId, chatsViewHolder.layout_last_message);
+
                 mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -121,7 +129,7 @@ public class ChatsFragment extends Fragment {
                         chatsViewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View v) {
-                                CharSequence options[] = new CharSequence[]{"Delete Chat"};
+                                CharSequence[] options = new CharSequence[]{"Delete Chat"};
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Chat option");
                                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -176,10 +184,6 @@ public class ChatsFragment extends Fragment {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.single_user_layout, parent, false);
 
-                TextView layout_single_status = view.findViewById(R.id.layout_single_status);
-                layout_single_status.setEnabled(false);
-                layout_single_status.setVisibility(View.INVISIBLE);
-
                 return new ChatsFragment.chatsViewHolder(view);
             }
         };
@@ -187,12 +191,53 @@ public class ChatsFragment extends Fragment {
         firebaseRecyclerAdapter.startListening();
     }
 
+    //last message
+    private void lastMessage(final String userId, final TextView last_msg) {
+        thelastMessage = "default";
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Messages messages = snapshot.getValue(Messages.class);
+                    if (messages != null) {
+                        if (messages.getTo().equals(firebaseUser.getUid()) && messages.getFrom().equals(userId)
+                                || messages.getFrom().equals(firebaseUser.getUid()) && messages.getTo().equals(userId)) {
+                            thelastMessage = messages.getMessage();
+                        }
+                    }
+                }
+                switch (thelastMessage) {
+                    case "default":
+                        last_msg.setText("");
+                        break;
+                    default:
+                        last_msg.setText(thelastMessage);
+                        break;
+                }
+                thelastMessage = "default";
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static class chatsViewHolder extends RecyclerView.ViewHolder {
         View mView;
+        TextView layout_last_message;
 
         chatsViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
+
+            layout_last_message = mView.findViewById(R.id.layout_single_status);
+            layout_last_message.setEnabled(false);
+            layout_last_message.setVisibility(View.INVISIBLE);
 
         }
 
@@ -217,7 +262,7 @@ public class ChatsFragment extends Fragment {
 
                 long lastTime = Long.parseLong(online_status);
 
-                String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, context);
+                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, context);
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);

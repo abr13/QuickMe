@@ -84,9 +84,8 @@ public class ProfileSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CropImage.activity()
-                        .setAspectRatio(1, 1)
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMaxCropResultSize(700, 700)
+                        .setMaxCropResultSize(1500, 1500)
                         .start(ProfileSettingsActivity.this);
             }
         });
@@ -135,8 +134,8 @@ public class ProfileSettingsActivity extends AppCompatActivity {
                 Bitmap thumb_bitmap = null;
                 try {
                     thumb_bitmap = new Compressor(this)
-                            .setMaxWidth(70)
-                            .setMaxHeight(70)
+                            .setMaxWidth(80)
+                            .setMaxHeight(80)
                             .setQuality(30)
                             .compressToBitmap(thumb_filePath);
                 } catch (IOException e) {

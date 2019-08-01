@@ -65,7 +65,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mCurrentUserId;
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-    private int mCurrentPage = 1;
+    private int mCurrentPage = 100;
 
     // function to generate a random string of length n (encryption key)
     static String getAlphaNumericString(int n) {
@@ -94,7 +94,7 @@ public class ChatActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    private void loadMessages() {
+    public void loadMessages() {
 
         DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
 
@@ -107,23 +107,24 @@ public class ChatActivity extends AppCompatActivity {
                 messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
 
-                mMessagesList.scrollToPosition(messagesList.size() - 1);
-                mRefreshLayout.setRefreshing(false);
+                //mMessagesList.scrollToPosition(messagesList.size() - 1);
+                //mRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                Messages message = dataSnapshot.getValue(Messages.class);
+                messagesList.add(message);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -234,8 +235,8 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-        //send message
 
+        //send message
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,29 +290,7 @@ public class ChatActivity extends AppCompatActivity {
             DatabaseReference user_message_push = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId).push();
             String push_id = user_message_push.getKey();
 
-            //Encrypt Message Here
-//            MessageEncryption me=new MessageEncryption();
-//            byte[] b=me.encrypt(message.getBytes());
-//            String encrypted= MessageEncryption.bytesToString(b);
-//            Log.d(TAG, "sendMessage: "+encrypted);
-            //MessageEncryption me = new MessageEncryption();
-
-//            TelephonyManager telephonyManager;
-//            telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-//            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    Activity#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for Activity#requestPermissions for more details.
-//                return;
-//            }
-//            String device_id = telephonyManager.getDeviceId();
-
-            //String m = me.encrypt(message, device_id);
-            //Log.d(TAG, "sendMessage: " + m + "///" + device_id);
+//            //Encrypt Message Here
             String key = getAlphaNumericString(20);
             String encryptedMsg = "";
 
@@ -330,6 +309,7 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("from", mCurrentUserId);
             messageMap.put("to", mChatUserId);
             messageMap.put("key", key);
+            messageMap.put("message_id", push_id);
 
             Map messageUserMap = new HashMap();
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
@@ -348,16 +328,16 @@ public class ChatActivity extends AppCompatActivity {
 
         }
 
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCurrentPage++;
-
-                messagesList.clear();
-
-                loadMoreMessages();
-            }
-        });
+//        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mCurrentPage++;
+//
+//                messagesList.clear();
+//
+//                loadMoreMessages();
+//            }
+//        });
     }
 
     private void loadMoreMessages() {
