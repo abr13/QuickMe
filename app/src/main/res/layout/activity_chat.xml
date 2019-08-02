@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#CB5D5D5D"
+    android:fitsSystemWindows="true"
     tools:context=".ChatActivity">
 
     <include
@@ -13,8 +14,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/message_refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/chat_linear_layout"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottompanel"
         android:layout_below="@id/chat_toolbar"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -25,7 +26,7 @@
             android:id="@+id/messages_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/chat_linear_layout"
+            android:layout_above="@id/bottompanel"
             android:layout_below="@id/chat_toolbar"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
@@ -33,46 +34,10 @@
             android:layout_marginEnd="0dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <LinearLayout
-        android:id="@+id/chat_linear_layout"
+    <br.com.instachat.emojilibrary.model.layout.TelegramPanel
+        android:id="@+id/bottompanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp">
-
-        <ImageButton
-            android:id="@+id/chat_add_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#fff"
-            android:baselineAlignBottom="true"
-            android:src="@drawable/round_add_circle_outline_24"
-            android:text="+" />
-
-        <EditText
-            android:id="@+id/chat_message_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="8"
-            android:background="#fff"
-            android:hint="Type your message..."
-            android:maxWidth="310dp"
-            android:maxHeight="200dp"
-            android:padding="10dp" />
-
-        <ImageButton
-            android:id="@+id/chat_send_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#fff"
-            android:baselineAlignBottom="true"
-            android:src="@drawable/round_send_24"
-            android:text="send" />
-    </LinearLayout>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

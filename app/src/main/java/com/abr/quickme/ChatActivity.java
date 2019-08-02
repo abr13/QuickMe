@@ -4,18 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,9 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.instachat.emojilibrary.controller.TelegramPanel;
+import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
+import br.com.instachat.emojilibrary.model.layout.TelegramPanelEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEventListener {
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private static final String TAG = "CHAT ACTIVITY";
@@ -56,8 +56,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mChatUserId, mChatUserName;
     private TextView mTitleView, mLastSeenView;
     private CircleImageView mProfileImage;
-    private ImageButton mChatAddBtn, mChatSendBtn;
-    private EditText mChatMessageView;
+
     private RecyclerView mMessagesList;
     private SwipeRefreshLayout mRefreshLayout;
     private DatabaseReference mRootRef;
@@ -66,6 +65,8 @@ public class ChatActivity extends AppCompatActivity {
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
     private int mCurrentPage = 100;
+
+    private TelegramPanel mBottomPanel;
 
     // function to generate a random string of length n (encryption key)
     static String getAlphaNumericString(int n) {
@@ -107,14 +108,12 @@ public class ChatActivity extends AppCompatActivity {
                 messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
 
-                //mMessagesList.scrollToPosition(messagesList.size() - 1);
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
                 //mRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Messages message = dataSnapshot.getValue(Messages.class);
-                messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -139,6 +138,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
@@ -146,9 +146,7 @@ public class ChatActivity extends AppCompatActivity {
         mChatUserId = getIntent().getStringExtra("user_id");
         mChatUserName = getIntent().getStringExtra("mChatUser");
 
-        mChatAddBtn = findViewById(R.id.chat_add_btn);
-        mChatSendBtn = findViewById(R.id.chat_send_btn);
-        mChatMessageView = findViewById(R.id.chat_message_view);
+        mBottomPanel = new TelegramPanel(this, this);
 
         mAdapter = new MessageAdapter(messagesList);
 
@@ -237,12 +235,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         //send message
-        mChatSendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
 
 
         //show full screen image
@@ -276,9 +268,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
 
-        String message = mChatMessageView.getText().toString();
-
-        if (!TextUtils.isEmpty(message)) {
+        String message = mBottomPanel.getText();
+        if (!message.trim().equals("")) {
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
@@ -315,7 +306,7 @@ public class ChatActivity extends AppCompatActivity {
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
             messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
 
-            mChatMessageView.setText("");
+            mBottomPanel.setText("");
 
             mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
@@ -342,5 +333,23 @@ public class ChatActivity extends AppCompatActivity {
 
     private void loadMoreMessages() {
 
+    }
+
+    @Override
+    public void onAttachClicked() {
+
+        Toast.makeText(this, "Attach", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMicClicked() {
+        Toast.makeText(this, "Mic", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSendClicked() {
+
+        //send message
+        sendMessage();
     }
 }

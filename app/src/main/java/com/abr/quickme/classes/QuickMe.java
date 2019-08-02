@@ -19,6 +19,7 @@ public class QuickMe extends Application {
         //Firebase offline cache
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
+
         //Picasso offline cache
 //        Picasso.Builder builder = new Picasso.Builder(this);
 //        builder.downloader((new OkHttp3Downloader(this, Integer.MAX_VALUE)));
