@@ -1,9 +1,13 @@
 package com.abr.quickme;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +17,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.abr.quickme.classes.GetTimeAgo;
+import com.abr.quickme.classes.TelegramBottomPanel;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+import com.cooltechworks.views.WhatsappViewCompat;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +40,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.scottyab.aescrypt.AESCrypt;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +55,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.instachat.emojilibrary.controller.TelegramPanel;
 import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
 import br.com.instachat.emojilibrary.model.layout.TelegramPanelEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,7 +78,12 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     private MessageAdapter mAdapter;
     private int mCurrentPage = 100;
 
-    private TelegramPanel mBottomPanel;
+    private TelegramBottomPanel mBottomPanel;
+
+    private String fileType = "", myUrl = "";
+    private Uri fileUrl;
+    private StorageTask uploadtask;
+    private ProgressDialog mProgressDialog;
 
     // function to generate a random string of length n (encryption key)
     static String getAlphaNumericString(int n) {
@@ -138,6 +155,8 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        mProgressDialog = new ProgressDialog(this);
+
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -146,7 +165,12 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         mChatUserId = getIntent().getStringExtra("user_id");
         mChatUserName = getIntent().getStringExtra("mChatUser");
 
-        mBottomPanel = new TelegramPanel(this, this);
+        mBottomPanel = new TelegramBottomPanel(this, this);
+        WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);
+        mBottomPanel.mInput.setMinLines(1);
+        mBottomPanel.mInput.setMaxLines(15);
+        mBottomPanel.mInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        mBottomPanel.mInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
 
         mAdapter = new MessageAdapter(messagesList);
 
@@ -278,7 +302,10 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
             String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
             String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
 
-            DatabaseReference user_message_push = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId).push();
+            DatabaseReference user_message_push = mRootRef.child("Messages")
+                    .child(mCurrentUserId)
+                    .child(mChatUserId)
+                    .push();
             String push_id = user_message_push.getKey();
 
 //            //Encrypt Message Here
@@ -338,7 +365,127 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     @Override
     public void onAttachClicked() {
 
-        Toast.makeText(this, "Attach", Toast.LENGTH_SHORT).show();
+        CharSequence[] options = new CharSequence[]
+                {
+                        "Image",
+                        "PDF",
+                        "DOCX"
+                };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose file type");
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    fileType = "image";
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    startActivityForResult(Intent.createChooser(intent, "Select Image"), 0);
+                }
+                if (which == 1) {
+                    fileType = "pdf";
+                }
+                if (which == 2) {
+                    fileType = "docx";
+                }
+            }
+        });
+        builder.show();
+    }
+
+
+    //image
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //image picked
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            fileUrl = data.getData();
+
+            if (!fileType.equals("image")) {
+                //not image
+
+            } else if (fileType.equals("image")) {
+                //image
+                mProgressDialog.setTitle("Sending image");
+                mProgressDialog.setMessage("Please wait while image is uploading...");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
+
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("image files");
+
+                final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
+                final String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
+
+                DatabaseReference user_message_push = mRootRef.child("Messages")
+                        .child(mCurrentUserId)
+                        .child(mChatUserId)
+                        .push();
+                final String push_id = user_message_push.getKey();
+
+                final StorageReference filepath = storageReference.child(push_id + ".jpg");
+
+                uploadtask = filepath.putFile(fileUrl);
+                uploadtask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception {
+
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+                        return filepath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            Date date = new Date();
+                            final String currentDateTime = dateFormat.format(date);
+
+                            Uri downloadUrl = task.getResult();
+                            myUrl = downloadUrl.toString();
+
+                            Map messageImageMap = new HashMap();
+                            messageImageMap.put("message", myUrl);
+                            messageImageMap.put("seen", "false");
+                            messageImageMap.put("type", fileType);
+                            messageImageMap.put("time", currentDateTime);
+                            messageImageMap.put("from", mCurrentUserId);
+                            messageImageMap.put("to", mChatUserId);
+                            messageImageMap.put("key", "null");
+                            messageImageMap.put("message_id", push_id);
+
+                            Map messageUserMap = new HashMap();
+                            messageUserMap.put(current_user_ref + "/" + push_id, messageImageMap);
+                            messageUserMap.put(chat_user_ref + "/" + push_id, messageImageMap);
+
+                            mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        mProgressDialog.dismiss();
+                                        Log.d("CHAT LOG ", databaseError.getMessage());
+                                        Toast.makeText(ChatActivity.this, "Error uploading image!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        mProgressDialog.dismiss();
+                                        Toast.makeText(ChatActivity.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+            } else {
+                Toast.makeText(this, "Nothing seleted!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Error choosing file!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

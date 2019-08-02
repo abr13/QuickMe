@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <com.cooltechworks.views.WhatsAppTextView
         android:id="@+id/message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +33,30 @@
         android:paddingLeft="30dp"
         android:paddingRight="15dp"
         android:textColor="#fff"
+        android:textSize="10sp"
+        tools:text="2019/07/15 20:55:35" />
+
+    <ImageView
+        android:id="@+id/message_image"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_below="@id/message_text"
+        android:layout_alignParentStart="true"
+        android:layout_margin="2dp"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/imageview_corner"
+        android:padding="2dp"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/time_text_image"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/message_image"
+        android:layout_alignBottom="@id/message_image"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="#000"
         android:textSize="10sp"
         tools:text="2019/07/15 20:55:35" />
 

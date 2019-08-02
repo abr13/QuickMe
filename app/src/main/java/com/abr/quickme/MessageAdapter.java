@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.scottyab.aescrypt.AESCrypt;
+import com.squareup.picasso.Picasso;
 
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -57,20 +59,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull final MessageViewHolder holder, final int position) {
 
+        holder.messageText.setVisibility(View.GONE);
+        holder.timeText.setVisibility(View.GONE);
+        holder.time_text_image.setVisibility(View.GONE);
+        holder.messageImage.setVisibility(View.GONE);
+
         final Messages message = mMessageList.get(position);
         final String from_user = message.getFrom();
+        final String message_type = message.getType();
 
-        //Decrypt Message Here
-        String messageAfterDecrypt = "";
-        try {
-            messageAfterDecrypt = AESCrypt.decrypt(message.getKey(), message.getMessage());
-            Log.d("", "onBindViewHolder: " + messageAfterDecrypt);
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
+        if (message_type.equals("text")) {
+            holder.messageText.setVisibility(View.VISIBLE);
+            holder.timeText.setVisibility(View.VISIBLE);
+            //Decrypt Message Here
+            String messageAfterDecrypt = "";
+            try {
+                messageAfterDecrypt = AESCrypt.decrypt(message.getKey(), message.getMessage());
+                Log.d("", "onBindViewHolder: " + messageAfterDecrypt);
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+
+            holder.messageText.setText(messageAfterDecrypt);
+            holder.timeText.setText(message.getTime());
+        } else if (message_type.equals("image")) {
+            holder.time_text_image.setVisibility(View.VISIBLE);
+            holder.messageImage.setVisibility(View.VISIBLE);
+
+            Picasso.get().load(message.getMessage()).placeholder(R.drawable.profile_sample).into(holder.messageImage);
+            holder.time_text_image.setText(message.getTime());
         }
 
-        holder.messageText.setText(messageAfterDecrypt);
-        holder.timeText.setText(message.getTime());
 
         if (from_user.equals(Cuser.getUid())) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -307,15 +326,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
-        //public EditText mChatMessageView;
+        TextView messageText, timeText, time_text_image;
+        ImageView messageImage;
 
         MessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.message_text);
             timeText = itemView.findViewById(R.id.time_text);
-            //mChatMessageView = itemView.findViewById(R.id.chat_message_view);
+
+            messageImage = itemView.findViewById(R.id.message_image);
+            time_text_image = itemView.findViewById(R.id.time_text_image);
         }
 
     }
