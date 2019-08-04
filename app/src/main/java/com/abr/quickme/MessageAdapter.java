@@ -123,6 +123,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             }
                         });
                         builder.show();
+                    } else if (mMessageList.get(position).getType().equals("image")) {
+                        Toast.makeText(holder.itemView.getContext(), "Image", Toast.LENGTH_SHORT).show();
                     }
 
                     return true;
@@ -131,6 +133,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
     }
+
 
     @Override
     public int getItemCount() {

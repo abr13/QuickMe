@@ -12,6 +12,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
 
     MainPagerAdapter(FragmentManager fm) {
         super(fm);
+
     }
 
     @Override
@@ -28,7 +29,8 @@ class MainPagerAdapter extends FragmentPagerAdapter {
                 FriendsFragment friendsFragment = new FriendsFragment();
                 return friendsFragment;
             default:
-                return null;
+                ChatsFragment defaultFragment = new ChatsFragment();
+                return defaultFragment;
 
         }
     }
@@ -41,7 +43,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "REQUEST";
+                return "REQUESTS";
             case 1:
                 return "CHATS";
             case 2:

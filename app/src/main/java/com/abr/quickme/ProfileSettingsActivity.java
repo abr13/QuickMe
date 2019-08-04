@@ -3,7 +3,6 @@ package com.abr.quickme;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -15,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +28,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -59,6 +56,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     private StorageReference mStorageRef, mImageStorage;
     private Button btn_statusSettings, btn_changeImage;
     private String ImgURL, ThumbURL;
+    private String image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +68,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
         mToolbar = findViewById(R.id.settings_toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Settings");
+        getSupportActionBar().setTitle("Profile Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDislplayImage = findViewById(R.id.settings_profile_image);
@@ -102,19 +100,22 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         });
 
         //show full screen image
-        final ImagePopup imagePopup = new ImagePopup(this);
-        imagePopup.setWindowHeight(800); // Optional
-        imagePopup.setWindowWidth(800); // Optional
-        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
-        imagePopup.setFullScreen(true); // Optional
-        imagePopup.setHideCloseIcon(true);  // Optional
-        imagePopup.setImageOnClickClose(true);// Optional
+//        final ImagePopup imagePopup = new ImagePopup(this);
+//        imagePopup.setWindowHeight(800); // Optional
+//        imagePopup.setWindowWidth(800); // Optional
+//        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+//        imagePopup.setFullScreen(true); // Optional
+//        imagePopup.setHideCloseIcon(true);  // Optional
+//        imagePopup.setImageOnClickClose(true);// Optional
 
         mDislplayImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePopup.initiatePopup(mDislplayImage.getDrawable());
-                imagePopup.viewPopup();
+//                imagePopup.initiatePopup(mDislplayImage.getDrawable());
+//                imagePopup.viewPopup();
+                Intent imageIntent = new Intent(ProfileSettingsActivity.this, ImageViewActivity.class);
+                imageIntent.putExtra("image", image);
+                startActivity(imageIntent);
 
             }
         });
@@ -219,23 +220,11 @@ public class ProfileSettingsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("name").getValue().toString();
-                final String image = dataSnapshot.child("image").getValue().toString();
+                image = dataSnapshot.child("image").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
                 final String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
-                if (!image.equals("default")) {
-                    Picasso.get().load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.profile_sample).into(mDislplayImage, new Callback() {
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Picasso.get().load(thumb_image).placeholder(R.drawable.profile_sample).into(mDislplayImage);
-                        }
-                    });
-                }
+                Picasso.get().load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.profile_sample).into(mDislplayImage);
                 mName.setText(name);
                 mStatus.setText(status);
 
