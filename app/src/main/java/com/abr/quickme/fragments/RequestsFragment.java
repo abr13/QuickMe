@@ -1,6 +1,7 @@
 package com.abr.quickme.fragments;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.R;
 import com.abr.quickme.models.Requests;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,6 +51,8 @@ public class RequestsFragment extends Fragment {
     private String mCurrentUserId;
     private View mMainView;
     private DatabaseReference mFriendRequestDatabase, mFriendDatabase, getTypeRef;
+
+    private String image;
 
     public RequestsFragment() {
         // Required empty public constructor
@@ -97,7 +101,38 @@ public class RequestsFragment extends Fragment {
                         holder.reqAcceptBtn.setVisibility(View.VISIBLE);
                         holder.reqDeclineBtn.setVisibility(View.VISIBLE);
 
+                        final ImagePopup imagePopup = new ImagePopup(holder.itemView.getContext());
+                        imagePopup.setWindowHeight(800); // Optional
+                        imagePopup.setWindowWidth(800); // Optional
+                        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+                        imagePopup.setFullScreen(true); // Optional
+                        imagePopup.setHideCloseIcon(true);  // Optional
+                        imagePopup.setImageOnClickClose(true);// Optional
+
+
                         final String listUserId = getRef(position).getKey(); // Gets Chatrequest / userID / first item.
+
+                        //user clicks in profile image, show full image popup
+                        holder.imageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mUsersDatabase.child(listUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        image = dataSnapshot.getValue().toString();
+
+                                        imagePopup.initiatePopup(holder.imageView.getDrawable());
+                                        imagePopup.viewPopup();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+                        });
 
                         final DatabaseReference getTypeRef = getRef(position).child("request_type").getRef();
                         getTypeRef.addValueEventListener(new ValueEventListener() {

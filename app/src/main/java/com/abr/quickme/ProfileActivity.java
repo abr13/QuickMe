@@ -2,8 +2,14 @@ package com.abr.quickme;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +33,10 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -44,6 +54,50 @@ public class ProfileActivity extends AppCompatActivity {
 
     private DatabaseReference mUsersDatabase, mFriendRequestDatabase, mFriendDatabase, mNotificationDatabase;
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.saveProfilePic) {
+
+            BitmapDrawable draw = (BitmapDrawable) mProfileImage.getDrawable();
+            Bitmap bitmap = draw.getBitmap();
+
+            FileOutputStream outStream = null;
+            File sdCard = Environment.getExternalStorageDirectory();
+            File dir = new File(sdCard.getAbsolutePath() + "/Quick Me/Quick Me Profile Photos");
+            dir.mkdirs();
+            String fileName = String.format("%s.jpg", mProfileName.getText().toString() + "_" + System.currentTimeMillis());
+            File outFile = new File(dir, fileName);
+            try {
+                outStream = new FileOutputStream(outFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                outStream.flush();
+                outStream.close();
+
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                intent.setData(Uri.fromFile(outFile));
+                sendBroadcast(intent);
+                Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+
+            } catch (FileNotFoundException e) {
+                Toast.makeText(this, "Error, File not found!", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            } catch (IOException e) {
+                Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+            return true;
+        } else {
+            return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        getMenuInflater().inflate(R.menu.profile_save_menu, menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +147,15 @@ public class ProfileActivity extends AppCompatActivity {
                 imageIntent.putExtra("image", image);
                 startActivity(imageIntent);
 
+            }
+        });
+
+        mProfileImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                registerForContextMenu(mProfileImage);
+
+                return false;
             }
         });
 

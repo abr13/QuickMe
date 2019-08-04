@@ -61,7 +61,8 @@
         android:layout_marginBottom="190dp"
         android:background="@drawable/button_background"
         android:padding="10dp"
-        android:text="Change Profile Picture" />
+        android:text="Change Profile Picture"
+        android:textColor="#000" />
 
     <Button
         android:id="@+id/btn_status_settings"
@@ -72,7 +73,8 @@
         android:layout_marginBottom="130dp"
         android:background="@drawable/button_background"
         android:padding="10dp"
-        android:text="Change Status" />
+        android:text="Change Status"
+        android:textColor="#000" />
 
 
 </RelativeLayout>
