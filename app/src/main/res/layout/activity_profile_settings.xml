@@ -59,7 +59,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="190dp"
-        android:background="@drawable/button_background"
         android:padding="10dp"
         android:text="Change Profile Picture"
         android:textColor="#000" />
@@ -71,7 +70,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="130dp"
-        android:background="@drawable/button_background"
         android:padding="10dp"
         android:text="Change Status"
         android:textColor="#000" />

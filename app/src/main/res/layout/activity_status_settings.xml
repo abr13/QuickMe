@@ -28,7 +28,7 @@
             android:padding="5dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_changeStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
         android:padding="12dp"
-        android:background="@drawable/button_background"
+        android:textColor="#000"
         android:paddingRight="10dp"
         android:text="Change Status" />
 
