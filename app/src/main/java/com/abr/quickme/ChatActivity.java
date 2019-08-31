@@ -404,6 +404,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         //image picked
         if (requestCode == 0 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             fileUrl = data.getData();
+            Log.d("TEST", "onActivityResult: " + fileUrl.toString());
 
             if (!fileType.equals("image")) {
                 //not image
