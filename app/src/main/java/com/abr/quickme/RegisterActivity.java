@@ -30,11 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
-    Button btn_register;
-    TextInputLayout textName, textEmail, textPassword;
+    private Button btn_register;
+    private TextInputLayout textName, textEmail, textPassword;
     private DatabaseReference mDatabase;
     private ProgressDialog mRegProgress;
-    TextView alreadyAccount;
+    private TextView alreadyAccount;
     private String email;
 
     @Override

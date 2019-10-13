@@ -241,7 +241,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         alert.setTitle("Edit Message");
         alert.setMessage("Modify your message");
 
-// Set an EditText view to get user input
+// Set an EditText view to get user input to edit message
         final EditText input = new EditText(holder.itemView.getContext());
         alert.setView(input);
         input.setPadding(30, 10, 30, 10);

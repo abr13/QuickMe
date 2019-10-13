@@ -27,7 +27,6 @@ import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.classes.TelegramBottomPanel;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
-import com.cooltechworks.views.WhatsappViewCompat;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -166,7 +165,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         mChatUserName = getIntent().getStringExtra("mChatUser");
 
         mBottomPanel = new TelegramBottomPanel(this, this);
-        WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);
+        //WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);//Text formatting
         mBottomPanel.mInput.setMinLines(1);
         mBottomPanel.mInput.setMaxLines(15);
         mBottomPanel.mInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -300,7 +299,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
             final String currentDateTime = dateFormat.format(date);
 
             String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
-            String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
+            String chat_user_ref = "Messages/" + mChatUserId + "/ " + mCurrentUserId;
 
             DatabaseReference user_message_push = mRootRef.child("Messages")
                     .child(mCurrentUserId)
