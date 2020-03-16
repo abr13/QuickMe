@@ -114,9 +114,39 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     public void loadMessages() {
 
         DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
-
+        DatabaseReference messageRef1 = mRootRef.child("Messages").child(mChatUserId).child(mCurrentUserId);
         Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
+        messageRef1.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Messages message = dataSnapshot.getValue(Messages.class);
+                messagesList.add(message);
+                mAdapter.notifyDataSetChanged();
+
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         messageQuary.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -314,6 +344,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
             try {
                 encryptedMsg = AESCrypt.encrypt(key, message.trim());
                 Log.d(TAG, "sendMessage: " + encryptedMsg);
+                Toast.makeText(this, "" + encryptedMsg, Toast.LENGTH_SHORT).show();
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             }
@@ -345,16 +376,16 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
         }
 
-//        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mCurrentPage++;
-//
-//                messagesList.clear();
-//
-//                loadMoreMessages();
-//            }
-//        });
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mCurrentPage++;
+
+                messagesList.clear();
+
+                loadMoreMessages();
+            }
+        });
     }
 
     private void loadMoreMessages() {
