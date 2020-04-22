@@ -6,7 +6,7 @@
         android:id="@+id/main_accsetting_btn"/>
     <item
         android:id="@+id/main_settings_btn"
-        android:title="Settings" />
+        android:title="App Settings" />
     <item android:title="All Users"
         android:id="@+id/main_allusers_btn"/>
     <item

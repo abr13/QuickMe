@@ -24,6 +24,11 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -46,6 +51,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,8 +71,9 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton googleSigninBtn;
     private ProgressDialog mRegProgress, mRegProgress1, mRegProgress2;
     private GoogleSignInClient mGoogleSignInClient;
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, UsersRef;
     private LoginButton facebookSigninBtn;
+    private AdView mAdViewBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         mRegProgress2 = new ProgressDialog(this);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mToolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(mToolbar);
@@ -87,9 +95,11 @@ public class LoginActivity extends AppCompatActivity {
         textlogPassword = findViewById(R.id.textlogPassword);
         btn_login = findViewById(R.id.btn_login);
 
-        googleSigninBtn = findViewById(R.id.googleSigninBtn);
 
+        googleSigninBtn = findViewById(R.id.googleSigninBtn);
         facebookSigninBtn = findViewById(R.id.facebookSigninBtn);
+
+        adView();
 
         mCallbackManager = CallbackManager.Factory.create();
         //check login for facebook
@@ -198,6 +208,19 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //show ad
+    private void adView() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdViewBottom = findViewById(R.id.adViewBottomLogin);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBottom.loadAd(adRequest);
+    }
+
     //normal signin
     private void signin_user(String email, String password, final View v) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -207,11 +230,28 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             mRegProgress.dismiss();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(mainIntent);
-                            finish();
+
+
+                            String currentUserId = mAuth.getCurrentUser().getUid();
+                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+                            UsersRef.child(currentUserId).child("device_token")
+                                    .setValue(deviceToken)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+
+                                                FirebaseUser user = mAuth.getCurrentUser();
+                                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(mainIntent);
+                                                finish();
+                                            }
+                                        }
+                                    });
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             mRegProgress.dismiss();
@@ -240,6 +280,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
+                Toast.makeText(this, "Google sign in failed!", Toast.LENGTH_SHORT).show();
                 // ...
             }
         }
@@ -270,10 +311,25 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
                                         mRegProgress1.dismiss();
-                                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(mainIntent);
-                                        finish();
+
+                                        String currentUserId = mAuth.getCurrentUser().getUid();
+                                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+                                        UsersRef.child(currentUserId).child("device_token")
+                                                .setValue(deviceToken)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+
+                                                            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                            startActivity(mainIntent);
+                                                            finish();
+                                                        }
+                                                    }
+                                                });
+
                                     } else {
                                         HashMap<String, String> userMap = new HashMap<>();
                                         userMap.put("name", name);
@@ -286,6 +342,7 @@ public class LoginActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     mRegProgress.dismiss();
+
                                                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                                     mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     startActivity(mainIntent);
@@ -340,11 +397,25 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
 
-                            loadUserProfile(token, user.getUid());
+                            String currentUserId = mAuth.getCurrentUser().getUid();
+                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
+                            UsersRef.child(currentUserId).child("device_token")
+                                    .setValue(deviceToken)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "signInWithCredential:successFB");
+                                                Toast.makeText(LoginActivity.this, "Success :)", Toast.LENGTH_SHORT).show();
+                                                FirebaseUser user = mAuth.getCurrentUser();
+
+                                                loadUserProfile(token, user.getUid());
+
+                                            }
+                                        }
+                                    });
 
                         } else {
                             // If sign in fails, display a message to the user.

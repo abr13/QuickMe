@@ -2,6 +2,7 @@ package com.abr.quickme;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.models.Messages;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,6 +66,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.time_text_image.setVisibility(View.GONE);
         holder.messageImage.setVisibility(View.GONE);
 
+        //show message image in fullscreen
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMessageList.get(position).getType().equals("image")) {
+                    final ImagePopup imagePopup = new ImagePopup(holder.itemView.getContext());
+                    imagePopup.setWindowHeight(800); // Optional
+                    imagePopup.setWindowWidth(800); // Optional
+                    imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+                    imagePopup.setFullScreen(true); // Optional
+                    imagePopup.setHideCloseIcon(true);  // Optional
+                    imagePopup.setImageOnClickClose(true);// Optional
+                    imagePopup.initiatePopup(holder.messageImage.getDrawable());
+                    imagePopup.viewPopup();
+                }
+            }
+        });
+
         final Messages message = mMessageList.get(position);
         final String from_user = message.getFrom();
         final String message_type = message.getType();
@@ -90,7 +110,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             holder.time_text_image.setText(message.getTime());
         }
 
-
         if (from_user.equals(Cuser.getUid())) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -103,21 +122,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
-                                    //Edit message
+                                    //Edit for all
                                     editMessage(position, holder);
-
-
                                 } else if (which == 1) {
                                     //Delete for all
                                     deleteMessageForAll(position, holder);
-
-
                                 }
                                 if (which == 2) {
                                     //Delete for me
                                     deleteSentMessage(position, holder);
-
-
                                 }
 
                             }

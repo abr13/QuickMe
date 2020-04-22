@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,11 +23,17 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     MaterialButton changePasswordBtn;
     TextInputLayout oldPasswordText, newPasswordText, cNewPasswordText;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
+
+        mToolbar = findViewById(R.id.changePassword_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Change Your Password");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         changePasswordBtn = findViewById(R.id.btn_ChangePassword);
         oldPasswordText = findViewById(R.id.textCurrentPassword);

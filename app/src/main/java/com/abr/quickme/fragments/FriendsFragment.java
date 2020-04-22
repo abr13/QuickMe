@@ -113,7 +113,7 @@ public class FriendsFragment extends Fragment {
                         friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                CharSequence options[] = new CharSequence[]{"Open Profile", "Send Message"};
+                                CharSequence[] options = new CharSequence[]{"Open Profile", "Send Message"};
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Perform Task");
                                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -157,7 +157,7 @@ public class FriendsFragment extends Fragment {
         firebaseRecyclerAdapter.startListening();
     }
 
-    public static class friendsViewHolder extends RecyclerView.ViewHolder {
+    static class friendsViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
         friendsViewHolder(View itemView) {
@@ -192,7 +192,7 @@ public class FriendsFragment extends Fragment {
 
                 long lastTime = Long.parseLong(online_status);
 
-                String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, context);
+                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, context);
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);

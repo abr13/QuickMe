@@ -129,7 +129,7 @@ public class ChatsFragment extends Fragment {
                         chatsViewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View v) {
-                                CharSequence[] options = new CharSequence[]{"Delete Chat"};
+                                CharSequence[] options = new CharSequence[]{"Delete Chat with Messages\nyou can't revert it back."};
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Chat option");
                                 builder.setItems(options, new DialogInterface.OnClickListener() {

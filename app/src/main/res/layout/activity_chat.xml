@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#CB5D5D5D"
-    android:fitsSystemWindows="true"
     tools:context=".ChatActivity">
 
     <include
@@ -14,8 +13,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/message_refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bottompanel"
+        android:layout_height="match_parent"
+        android:layout_above="@id/li1"
         android:layout_below="@id/chat_toolbar"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -26,18 +25,26 @@
             android:id="@+id/messages_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/bottompanel"
             android:layout_below="@id/chat_toolbar"
             android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <br.com.instachat.emojilibrary.model.layout.TelegramPanel
-        android:id="@+id/bottompanel"
+
+    <LinearLayout
+        android:id="@+id/li1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true">
+
+        <br.com.instachat.emojilibrary.model.layout.TelegramPanel
+            android:id="@+id/bottompanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
 
 </RelativeLayout>

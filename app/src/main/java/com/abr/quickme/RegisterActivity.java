@@ -23,19 +23,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private FirebaseAuth mAuth;
     Button btn_register;
     TextInputLayout textName, textEmail, textPassword;
+    TextView alreadyAccount;
+    private Toolbar mToolbar;
+    private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private ProgressDialog mRegProgress;
-    TextView alreadyAccount;
     private String email;
+    private DatabaseReference UsersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +135,27 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         mRegProgress.dismiss();
-                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(mainIntent);
-                                        finish();
+
+
+                                        String currentUserId = mAuth.getCurrentUser().getUid();
+                                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+                                        UsersRef.child(currentUserId).child("device_token")
+                                                .setValue(deviceToken)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                            startActivity(mainIntent);
+                                                            finish();
+
+                                                        }
+                                                    }
+                                                });
+
+
                                     }
                                 }
                             });

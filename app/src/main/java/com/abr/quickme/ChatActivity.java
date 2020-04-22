@@ -27,7 +27,6 @@ import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.classes.TelegramBottomPanel;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
-import com.cooltechworks.views.WhatsappViewCompat;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,10 +60,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEventListener {
 
-    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private static final int TOTAL_ITEMS_TO_LOAD = 20;
     private static final String TAG = "CHAT ACTIVITY";
     private final List<Messages> messagesList = new ArrayList<>();
-    Toolbar mChatToolbar;
+    private Toolbar mChatToolbar;
     private String mChatUserId, mChatUserName;
     private TextView mTitleView, mLastSeenView;
     private CircleImageView mProfileImage;
@@ -76,7 +75,10 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     private String mCurrentUserId;
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-    private int mCurrentPage = 100;
+    private int mCurrentPage = 1;
+    private int itemPos = 0;
+    private String mLastKey = "";
+    private String mPrevKey = "";
 
     private TelegramBottomPanel mBottomPanel;
 
@@ -110,184 +112,6 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         }
 
         return sb.toString();
-    }
-
-    public void loadMessages() {
-
-        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
-
-        Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
-
-        messageQuary.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Messages message = dataSnapshot.getValue(Messages.class);
-                messagesList.add(message);
-                mAdapter.notifyDataSetChanged();
-
-                mMessagesList.scrollToPosition(messagesList.size() - 1);
-                //mRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
-
-        mProgressDialog = new ProgressDialog(this);
-
-
-        mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
-        mCurrentUserId = mAuth.getCurrentUser().getUid();
-
-        mChatUserId = getIntent().getStringExtra("user_id");
-        mChatUserName = getIntent().getStringExtra("mChatUser");
-
-        mBottomPanel = new TelegramBottomPanel(this, this);
-        WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);
-        mBottomPanel.mInput.setMinLines(1);
-        mBottomPanel.mInput.setMaxLines(15);
-        mBottomPanel.mInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        mBottomPanel.mInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
-
-        mAdapter = new MessageAdapter(messagesList);
-
-        mMessagesList = findViewById(R.id.messages_list);
-        mLinearLayout = new LinearLayoutManager(this);
-        mRefreshLayout = findViewById(R.id.message_refreshLayout);
-
-        mMessagesList.setHasFixedSize(true);
-        mMessagesList.setLayoutManager(mLinearLayout);
-        mMessagesList.setAdapter(mAdapter);
-
-        loadMessages();
-
-        mChatToolbar = findViewById(R.id.chat_toolbar);
-        setSupportActionBar(mChatToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-//        getSupportActionBar().setTitle(mChatUserName);
-
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
-        actionBar.setCustomView(action_bar_view);
-
-        mTitleView = findViewById(R.id.custom_bar_name);
-        mLastSeenView = findViewById(R.id.custom_bar_lastseen);
-        mProfileImage = findViewById(R.id.custom_bar_image);
-
-        mTitleView.setText(mChatUserName);
-
-        mRootRef.child("Users").child(mChatUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String online = dataSnapshot.child("online").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
-
-                if (online.equals("true")) {
-                    mLastSeenView.setText("online");
-                } else {
-
-                    GetTimeAgo getTimeAgo = new GetTimeAgo();
-
-                    long lastTime = Long.parseLong(online);
-
-                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
-
-                    mLastSeenView.setText("last seen " + lastSeenTime);
-                }
-                Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mProfileImage);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild(mChatUserId)) {
-                    Map chatAddMap = new HashMap();
-                    chatAddMap.put("seen", false);
-                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
-
-                    Map chatUserMap = new HashMap();
-                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUserId, chatAddMap);
-                    chatUserMap.put("Chat/" + mChatUserId + "/" + mCurrentUserId, chatAddMap);
-
-                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            if (databaseError != null) {
-                                Log.d("CHAT LOG ", databaseError.getMessage());
-                            }
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //send message
-
-
-        //show full screen image
-        final ImagePopup imagePopup = new ImagePopup(this);
-        imagePopup.setWindowHeight(800); // Optional
-        imagePopup.setWindowWidth(800); // Optional
-        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
-        imagePopup.setFullScreen(true); // Optional
-        imagePopup.setHideCloseIcon(true);  // Optional
-        imagePopup.setImageOnClickClose(true);// Optional
-
-        mProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagePopup.initiatePopup(mProfileImage.getDrawable());
-                imagePopup.viewPopup();
-
-            }
-        });
-
-        mTitleView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent profileIntent = new Intent(ChatActivity.this, ProfileActivity.class);
-                profileIntent.putExtra("user_id", mChatUserId);
-                startActivity(profileIntent);
-            }
-        });
-
     }
 
     private void sendMessage() {
@@ -346,19 +170,252 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
         }
 
-//        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mCurrentPage++;
-//
-//                messagesList.clear();
-//
-//                loadMoreMessages();
-//            }
-//        });
+    }
+
+    public void loadMessages() {
+
+        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
+        Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+
+        messageQuary.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Messages message = dataSnapshot.getValue(Messages.class);
+                itemPos++;
+                if (itemPos == 1) {
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                    mPrevKey = messageKey;
+                }
+                messagesList.add(message);
+
+                mAdapter.notifyDataSetChanged();
+
+                //mMessagesList.scrollToPosition(messagesList.size() - 1);
+                mRefreshLayout.setRefreshing(false);
+
+                mLinearLayout.scrollToPositionWithOffset(itemPos, 0);
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadMoreMessages() {
+
+        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
+        Query messageQuary = messageRef.orderByKey().endAt(mLastKey).limitToLast(10);
+
+        messageQuary.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                Messages message = dataSnapshot.getValue(Messages.class);
+                String messageKey = dataSnapshot.getKey();
+
+                if (!mPrevKey.equals(messageKey)) {
+                    messagesList.add(itemPos++, message);
+                } else {
+                    mPrevKey = messageKey;
+                }
+                if (itemPos == 1) {
+
+                    mLastKey = messageKey;
+                }
+
+                mAdapter.notifyDataSetChanged();
+
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
+                mRefreshLayout.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
+
+        mProgressDialog = new ProgressDialog(this);
+
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        mCurrentUserId = mAuth.getCurrentUser().getUid();
+
+        mChatUserId = getIntent().getStringExtra("user_id");
+        mChatUserName = getIntent().getStringExtra("mChatUser");
+
+        mBottomPanel = new TelegramBottomPanel(this, this);
+        //WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);
+        mBottomPanel.mInput.setMinLines(1);
+        mBottomPanel.mInput.setMaxLines(20);
+        mBottomPanel.mInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        mBottomPanel.mInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+
+        mAdapter = new MessageAdapter(messagesList);
+
+        mMessagesList = findViewById(R.id.messages_list);
+        mLinearLayout = new LinearLayoutManager(this);
+        mRefreshLayout = findViewById(R.id.message_refreshLayout);
+
+        mMessagesList.setHasFixedSize(true);
+        mMessagesList.setLayoutManager(mLinearLayout);
+        mMessagesList.setAdapter(mAdapter);
+
+        loadMessages();
+
+        mChatToolbar = findViewById(R.id.chat_toolbar);
+        setSupportActionBar(mChatToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+//        getSupportActionBar().setTitle(mChatUserName);
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
+        actionBar.setCustomView(action_bar_view);
+
+        mTitleView = findViewById(R.id.custom_bar_name);
+        mLastSeenView = findViewById(R.id.custom_bar_lastseen);
+        mProfileImage = findViewById(R.id.custom_bar_image);
+
+        mTitleView.setText(mChatUserName);
+
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                mCurrentPage++;
+                itemPos = 0;
+                loadMoreMessages();
+
+            }
+        });
+
+        mRootRef.child("Users").child(mChatUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String online = dataSnapshot.child("online").getValue().toString();
+                String image = dataSnapshot.child("image").getValue().toString();
+
+                if (online.equals("true")) {
+                    mLastSeenView.setText("online");
+                } else {
+
+                    GetTimeAgo getTimeAgo = new GetTimeAgo();
+
+                    long lastTime = Long.parseLong(online);
+
+                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+
+                    mLastSeenView.setText("last seen " + lastSeenTime);
+                }
+                Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(mProfileImage);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(mChatUserId)) {
+                    Map chatAddMap = new HashMap();
+                    chatAddMap.put("seen", false);
+                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
+
+                    Map chatUserMap = new HashMap();
+                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUserId, chatAddMap);
+                    chatUserMap.put("Chat/" + mChatUserId + "/" + mCurrentUserId, chatAddMap);
+
+                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            if (databaseError != null) {
+                                Log.d("CHAT LOG ", databaseError.getMessage());
+                            }
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //show full screen image
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(800); // Optional
+        imagePopup.setWindowWidth(800); // Optional
+        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+        imagePopup.setFullScreen(true); // Optional
+        imagePopup.setHideCloseIcon(true);  // Optional
+        imagePopup.setImageOnClickClose(true);// Optional
+
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imagePopup.initiatePopup(mProfileImage.getDrawable());
+                imagePopup.viewPopup();
+
+            }
+        });
+
+        mTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(ChatActivity.this, ProfileActivity.class);
+                profileIntent.putExtra("user_id", mChatUserId);
+                startActivity(profileIntent);
+            }
+        });
 
     }
 
@@ -395,8 +452,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         builder.show();
     }
 
-
-    //image
+    //image selected
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -490,13 +546,11 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
     @Override
     public void onMicClicked() {
-        Toast.makeText(this, "Mic", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Mic Not Configured!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSendClicked() {
-
-        //send message
         sendMessage();
     }
 }
