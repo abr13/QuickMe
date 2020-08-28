@@ -46,7 +46,7 @@ public class ChatsFragment extends Fragment {
 
     private RecyclerView mChatsList;
 
-    private DatabaseReference mChatsDatabase, mUsersDatabase;
+    private DatabaseReference mChatsDatabase, mUsersDatabase, mFriendDatabase;
     private FirebaseAuth mAuth;
 
     private String mCurrentUserId;
@@ -54,6 +54,7 @@ public class ChatsFragment extends Fragment {
     private View mMainView;
 
     private String thelastMessage;
+    private DatabaseReference mUserDatabase;
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -64,6 +65,10 @@ public class ChatsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        //online
+
+
         mMainView = inflater.inflate(R.layout.fragment_chats, container, false);
         mChatsList = mMainView.findViewById(R.id.chats_list_recycler);
 
@@ -82,6 +87,7 @@ public class ChatsFragment extends Fragment {
 
         return mMainView;
     }
+
 
     @Override
     public void onStart() {
@@ -152,7 +158,7 @@ public class ChatsFragment extends Fragment {
                                                                                     mRootRef.child("Chat").child(mCurrentUserId).child(listUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void aVoid) {
-                                                                                            Toast.makeText(getContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
+                                                                                            Toast.makeText(getContext(), "All Messages and Chat Deleted!", Toast.LENGTH_SHORT).show();
                                                                                         }
                                                                                     });
                                                                                 }
@@ -262,12 +268,14 @@ public class ChatsFragment extends Fragment {
 
                 long lastTime = Long.parseLong(online_status);
 
-                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, context);
+                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime - 1000, context);
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
                 userLastseen.setText("last seen : " + lastSeenTime);
             }
         }
+
+
     }
 }

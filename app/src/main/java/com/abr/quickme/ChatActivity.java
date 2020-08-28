@@ -58,6 +58,8 @@ import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
 import br.com.instachat.emojilibrary.model.layout.TelegramPanelEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.abr.quickme.classes.GetTimeAgo.getTimeAgo;
+
 public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEventListener {
 
     private static final int TOTAL_ITEMS_TO_LOAD = 20;
@@ -70,7 +72,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
     private RecyclerView mMessagesList;
     private SwipeRefreshLayout mRefreshLayout;
-    private DatabaseReference mRootRef;
+    private DatabaseReference mRootRef, mFriendDatabase;
     private FirebaseAuth mAuth;
     private String mCurrentUserId;
     private LinearLayoutManager mLinearLayout;
@@ -115,60 +117,77 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     }
 
     private void sendMessage() {
+        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+        mFriendDatabase.child(mCurrentUserId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-        String message = mBottomPanel.getText();
-        if (!message.trim().equals("")) {
+                        //if friend then only send message
+                        if (dataSnapshot.hasChild(mChatUserId)) {
+                            String message = mBottomPanel.getText();
+                            if (!message.trim().equals("")) {
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-            final String currentDateTime = dateFormat.format(date);
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                Date date = new Date();
+                                final String currentDateTime = dateFormat.format(date);
 
-            String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
-            String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
+                                String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
+                                String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
 
-            DatabaseReference user_message_push = mRootRef.child("Messages")
-                    .child(mCurrentUserId)
-                    .child(mChatUserId)
-                    .push();
-            String push_id = user_message_push.getKey();
+                                DatabaseReference user_message_push = mRootRef.child("Messages")
+                                        .child(mCurrentUserId)
+                                        .child(mChatUserId)
+                                        .push();
+                                String push_id = user_message_push.getKey();
 
 //            //Encrypt Message Here
-            String key = getAlphaNumericString(20);
-            String encryptedMsg = "";
+                                String key = getAlphaNumericString(20);
+                                String encryptedMsg = "";
 
-            try {
-                encryptedMsg = AESCrypt.encrypt(key, message.trim());
-                Log.d(TAG, "sendMessage: " + encryptedMsg);
-            } catch (GeneralSecurityException e) {
-                e.printStackTrace();
-            }
+                                try {
+                                    encryptedMsg = AESCrypt.encrypt(key, message.trim());
+                                    Log.d(TAG, "sendMessage: " + encryptedMsg);
+                                } catch (GeneralSecurityException e) {
+                                    e.printStackTrace();
+                                }
 
-            Map messageMap = new HashMap();
-            messageMap.put("message", encryptedMsg);
-            messageMap.put("seen", "false");
-            messageMap.put("type", "text");
-            messageMap.put("time", currentDateTime);
-            messageMap.put("from", mCurrentUserId);
-            messageMap.put("to", mChatUserId);
-            messageMap.put("key", key);
-            messageMap.put("message_id", push_id);
+                                Map messageMap = new HashMap();
+                                messageMap.put("message", encryptedMsg);
+                                messageMap.put("seen", "false");
+                                messageMap.put("type", "text");
+                                messageMap.put("time", currentDateTime);
+                                messageMap.put("from", mCurrentUserId);
+                                messageMap.put("to", mChatUserId);
+                                messageMap.put("key", key);
+                                messageMap.put("message_id", push_id);
 
-            Map messageUserMap = new HashMap();
-            messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-            messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+                                Map messageUserMap = new HashMap();
+                                messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+                                messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
 
-            mBottomPanel.setText("");
+                                mBottomPanel.setText("");
 
-            mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        Log.d("CHAT LOG ", databaseError.getMessage());
+                                mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                        if (databaseError != null) {
+                                            Log.d("CHAT LOG ", databaseError.getMessage());
+                                        }
+                                    }
+                                });
+
+                            }
+                        } else {
+                            Toast.makeText(ChatActivity.this, "You both broke up!", Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
-            });
 
-        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
 
     }
 
@@ -275,7 +294,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mProgressDialog = new ProgressDialog(this);
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -345,8 +364,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
                     GetTimeAgo getTimeAgo = new GetTimeAgo();
 
                     long lastTime = Long.parseLong(online);
-
-                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+                    String lastSeenTime = getTimeAgo(lastTime - 1000, getApplicationContext());
 
                     mLastSeenView.setText("last seen " + lastSeenTime);
                 }

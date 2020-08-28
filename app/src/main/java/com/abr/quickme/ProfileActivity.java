@@ -419,7 +419,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-
                                                     final DatabaseReference mRootRef;
                                                     mRootRef = FirebaseDatabase.getInstance().getReference();
                                                     mRootRef.child("Messages").child(mCurrentUser.getUid()).child(selected_user_id).removeValue()
@@ -430,27 +429,28 @@ public class ProfileActivity extends AppCompatActivity {
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
-                                                                                    mRootRef.child("Chat").child(selected_user_id).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(Void aVoid) {
-                                                                                            mRootRef.child("Chat").child(mCurrentUser.getUid()).child(selected_user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    mRootRef.child("Chat").child(mCurrentUser.getUid()).child(selected_user_id).removeValue()
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(Void aVoid) {
-                                                                                                    Toast.makeText(getApplicationContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
+                                                                                                    mRootRef.child("Chat").child(selected_user_id).child(mCurrentUser.getUid()).removeValue()
+                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                                    mProfileSendRequestButton.setEnabled(true);
+                                                                                                                    current_state = "not_friends";
+                                                                                                                    mProfileSendRequestButton.setText("Send Friend Request");
+                                                                                                                    Toast.makeText(ProfileActivity.this, "Un Friend Done, you're rud!", Toast.LENGTH_LONG).show();
+                                                                                                                }
+                                                                                                            });
                                                                                                 }
                                                                                             });
-                                                                                        }
-                                                                                    });
                                                                                 }
                                                                             });
                                                                 }
                                                             });
 
 
-                                                    mProfileSendRequestButton.setEnabled(true);
-                                                    current_state = "not_friends";
-                                                    mProfileSendRequestButton.setText("Send Friend Request");
-                                                    Toast.makeText(ProfileActivity.this, "Un Friend Done, you're rud!", Toast.LENGTH_LONG).show();
                                                 }
                                             });
                                 }
@@ -461,3 +461,4 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 }
+
