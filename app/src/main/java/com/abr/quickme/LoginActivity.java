@@ -133,8 +133,6 @@ public class LoginActivity extends AppCompatActivity {
                 // ...
             }
         });
-// ...
-
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -282,6 +280,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.w(TAG, "Google sign in failed", e);
                 Toast.makeText(this, "Google sign in failed!", Toast.LENGTH_SHORT).show();
                 // ...
+                mRegProgress1.dismiss();
             }
         }
     }

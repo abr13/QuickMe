@@ -269,12 +269,12 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                loadMessages();
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                loadMessages();
             }
 
             @Override

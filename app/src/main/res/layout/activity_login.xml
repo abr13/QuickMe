@@ -48,7 +48,6 @@
             android:visibility="gone" />
 
 
-
     </LinearLayout>
 
 
@@ -62,10 +61,10 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="0dp"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
-        android:layout_marginBottom="50dp"
         android:paddingBottom="30dp">
 
 
@@ -131,7 +130,7 @@
                 android:id="@+id/donthaveAccount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="13dp"
                 android:clickable="true"
                 android:gravity="center_horizontal"
                 android:onClick="onClick"
@@ -142,6 +141,7 @@
 
 
     </LinearLayout>
+
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adViewBottomLogin"

@@ -311,6 +311,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                                                             if (task.isSuccessful()) {
                                                                 MessageAdapter m = new MessageAdapter(mMessageList);
                                                                 m.notifyDataSetChanged();
+
                                                                 Toast.makeText(holder.itemView.getContext(), "Edited", Toast.LENGTH_SHORT).show();
 
                                                             } else {
