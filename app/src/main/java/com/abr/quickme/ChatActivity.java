@@ -58,29 +58,24 @@ import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
 import br.com.instachat.emojilibrary.model.layout.TelegramPanelEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.abr.quickme.classes.GetTimeAgo.getTimeAgo;
-
 public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEventListener {
 
-    private static final int TOTAL_ITEMS_TO_LOAD = 20;
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private static final String TAG = "CHAT ACTIVITY";
     private final List<Messages> messagesList = new ArrayList<>();
-    private Toolbar mChatToolbar;
+    private final int mCurrentPage = 100;
     private String mChatUserId, mChatUserName;
     private TextView mTitleView, mLastSeenView;
     private CircleImageView mProfileImage;
 
     private RecyclerView mMessagesList;
     private SwipeRefreshLayout mRefreshLayout;
-    private DatabaseReference mRootRef, mFriendDatabase;
+    Toolbar mChatToolbar;
     private FirebaseAuth mAuth;
     private String mCurrentUserId;
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-    private int mCurrentPage = 1;
-    private int itemPos = 0;
-    private String mLastKey = "";
-    private String mPrevKey = "";
+    private DatabaseReference mRootRef;
 
     private TelegramBottomPanel mBottomPanel;
 
@@ -116,119 +111,35 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         return sb.toString();
     }
 
-    private void sendMessage() {
-        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
-        mFriendDatabase.child(mCurrentUserId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        //if friend then only send message
-                        if (dataSnapshot.hasChild(mChatUserId)) {
-                            String message = mBottomPanel.getText();
-                            if (!message.trim().equals("")) {
-
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                Date date = new Date();
-                                final String currentDateTime = dateFormat.format(date);
-
-                                String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
-                                String chat_user_ref = "Messages/" + mChatUserId + "/" + mCurrentUserId;
-
-                                DatabaseReference user_message_push = mRootRef.child("Messages")
-                                        .child(mCurrentUserId)
-                                        .child(mChatUserId)
-                                        .push();
-                                String push_id = user_message_push.getKey();
-
-//            //Encrypt Message Here
-                                String key = getAlphaNumericString(20);
-                                String encryptedMsg = "";
-
-                                try {
-                                    encryptedMsg = AESCrypt.encrypt(key, message.trim());
-                                    Log.d(TAG, "sendMessage: " + encryptedMsg);
-                                } catch (GeneralSecurityException e) {
-                                    e.printStackTrace();
-                                }
-
-                                Map messageMap = new HashMap();
-                                messageMap.put("message", encryptedMsg);
-                                messageMap.put("seen", "false");
-                                messageMap.put("type", "text");
-                                messageMap.put("time", currentDateTime);
-                                messageMap.put("from", mCurrentUserId);
-                                messageMap.put("to", mChatUserId);
-                                messageMap.put("key", key);
-                                messageMap.put("message_id", push_id);
-
-                                Map messageUserMap = new HashMap();
-                                messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-                                messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
-
-                                mBottomPanel.setText("");
-
-                                mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                        if (databaseError != null) {
-                                            Log.d("CHAT LOG ", databaseError.getMessage());
-                                        }
-                                    }
-                                });
-
-                            }
-                        } else {
-                            Toast.makeText(ChatActivity.this, "You both broke up!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-
-
-    }
-
     public void loadMessages() {
 
         DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
+        DatabaseReference messageRef1 = mRootRef.child("Messages").child(mChatUserId).child(mCurrentUserId);
         Query messageQuary = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
-        messageQuary.addChildEventListener(new ChildEventListener() {
+        messageRef1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Messages message = dataSnapshot.getValue(Messages.class);
-                itemPos++;
-                if (itemPos == 1) {
-                    String messageKey = dataSnapshot.getKey();
-                    mLastKey = messageKey;
-                    mPrevKey = messageKey;
-                }
                 messagesList.add(message);
-
                 mAdapter.notifyDataSetChanged();
 
-                //mMessagesList.scrollToPosition(messagesList.size() - 1);
-                mRefreshLayout.setRefreshing(false);
-
-                mLinearLayout.scrollToPositionWithOffset(itemPos, 0);
                 mMessagesList.scrollToPosition(messagesList.size() - 1);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                mAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                mAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -236,50 +147,29 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
             }
         });
-    }
-
-    private void loadMoreMessages() {
-
-        DatabaseReference messageRef = mRootRef.child("Messages").child(mCurrentUserId).child(mChatUserId);
-        Query messageQuary = messageRef.orderByKey().endAt(mLastKey).limitToLast(10);
-
         messageQuary.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
                 Messages message = dataSnapshot.getValue(Messages.class);
-                String messageKey = dataSnapshot.getKey();
-
-                if (!mPrevKey.equals(messageKey)) {
-                    messagesList.add(itemPos++, message);
-                } else {
-                    mPrevKey = messageKey;
-                }
-                if (itemPos == 1) {
-
-                    mLastKey = messageKey;
-                }
-
+                messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
 
                 mMessagesList.scrollToPosition(messagesList.size() - 1);
-                mRefreshLayout.setRefreshing(false);
-
+                //mRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                loadMessages();
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                loadMessages();
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -287,15 +177,15 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
             }
         });
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         mProgressDialog = new ProgressDialog(this);
+
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -305,9 +195,9 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         mChatUserName = getIntent().getStringExtra("mChatUser");
 
         mBottomPanel = new TelegramBottomPanel(this, this);
-        //WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);
+        //WhatsappViewCompat.applyFormatting(mBottomPanel.mInput);//Text formatting
         mBottomPanel.mInput.setMinLines(1);
-        mBottomPanel.mInput.setMaxLines(20);
+        mBottomPanel.mInput.setMaxLines(15);
         mBottomPanel.mInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         mBottomPanel.mInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
 
@@ -340,17 +230,6 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
         mTitleView.setText(mChatUserName);
 
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                mCurrentPage++;
-                itemPos = 0;
-                loadMoreMessages();
-
-            }
-        });
-
         mRootRef.child("Users").child(mChatUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -364,7 +243,8 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
                     GetTimeAgo getTimeAgo = new GetTimeAgo();
 
                     long lastTime = Long.parseLong(online);
-                    String lastSeenTime = getTimeAgo(lastTime - 1000, getApplicationContext());
+
+                    String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, getApplicationContext());
 
                     mLastSeenView.setText("last seen " + lastSeenTime);
                 }
@@ -407,6 +287,8 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
             }
         });
 
+        //send message
+
 
         //show full screen image
         final ImagePopup imagePopup = new ImagePopup(this);
@@ -434,6 +316,80 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
                 startActivity(profileIntent);
             }
         });
+
+    }
+
+    private void sendMessage() {
+
+        String message = mBottomPanel.getText();
+        if (!message.trim().equals("")) {
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            final String currentDateTime = dateFormat.format(date);
+
+            String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUserId;
+            String chat_user_ref = "Messages/" + mChatUserId + "/ " + mCurrentUserId;
+
+            DatabaseReference user_message_push = mRootRef.child("Messages")
+                    .child(mCurrentUserId)
+                    .child(mChatUserId)
+                    .push();
+            String push_id = user_message_push.getKey();
+
+//            //Encrypt Message Here
+            String key = getAlphaNumericString(20);
+            String encryptedMsg = "";
+
+            try {
+                encryptedMsg = AESCrypt.encrypt(key, message.trim());
+                Log.d(TAG, "sendMessage: " + encryptedMsg);
+//                Toast.makeText(this, "" + encryptedMsg, Toast.LENGTH_SHORT).show();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+
+            Map messageMap = new HashMap();
+            messageMap.put("message", encryptedMsg);
+            messageMap.put("seen", "false");
+            messageMap.put("type", "text");
+            messageMap.put("time", currentDateTime);
+            messageMap.put("from", mCurrentUserId);
+            messageMap.put("to", mChatUserId);
+            messageMap.put("key", key);
+            messageMap.put("message_id", push_id);
+
+            Map messageUserMap = new HashMap();
+            messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+            messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+
+            mBottomPanel.setText("");
+
+            mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        Log.d("CHAT LOG ", databaseError.getMessage());
+                    }
+                }
+            });
+
+        }
+        mRefreshLayout.setEnabled(false);
+
+//        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mCurrentPage++;
+//
+//                messagesList.clear();
+//
+//                loadMoreMessages();
+//            }
+//        });
+    }
+
+    private void loadMoreMessages() {
 
     }
 
@@ -470,7 +426,8 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         builder.show();
     }
 
-    //image selected
+
+    //image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -478,6 +435,7 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
         //image picked
         if (requestCode == 0 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             fileUrl = data.getData();
+            Log.d("TEST", "onActivityResult: " + fileUrl.toString());
 
             if (!fileType.equals("image")) {
                 //not image
@@ -564,11 +522,13 @@ public class ChatActivity extends EmojiCompatActivity implements TelegramPanelEv
 
     @Override
     public void onMicClicked() {
-        Toast.makeText(this, "Mic Not Configured!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Mic under development!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSendClicked() {
+
+        //send message
         sendMessage();
     }
 }

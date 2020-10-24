@@ -35,7 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private static final int MSG_TYPE_LEFT = 0;
     private static final int MSG_TYPE_RIGHT = 1;
-    private List<Messages> mMessageList;
+    private final List<Messages> mMessageList;
     private FirebaseUser Cuser;
 
     MessageAdapter(List<Messages> mMessageList) {
@@ -99,6 +99,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             }
+//alert notification required when app is in background
+//            Alerter.create(holder.itemView.getContext())
+//                    .setTitle("title")
+//                    .setText("message")
+//                    .show();
+
 
             holder.messageText.setText(messageAfterDecrypt);
             holder.timeText.setText(message.getTime());
@@ -339,6 +345,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         });
 
         alert.show();
+
+    }
+
+    public void alert(String title, String message) {
 
     }
 
