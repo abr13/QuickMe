@@ -84,7 +84,6 @@ public class UsersActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
         FirebaseRecyclerOptions<Users> options =
                 new FirebaseRecyclerOptions.Builder<Users>()
                         .setQuery(mUsersDatabase, Users.class)
@@ -106,7 +105,6 @@ public class UsersActivity extends AppCompatActivity {
                         startActivity(profileIntent);
                     }
                 });
-
             }
 
             @NonNull

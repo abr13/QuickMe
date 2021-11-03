@@ -1,5 +1,7 @@
 package com.abr.quickme;
 
+import static com.abr.quickme.ChatActivity.getAlphaNumericString;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -28,8 +30,6 @@ import com.squareup.picasso.Picasso;
 
 import java.security.GeneralSecurityException;
 import java.util.List;
-
-import static com.abr.quickme.ChatActivity.getAlphaNumericString;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
@@ -318,7 +318,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                                                                 MessageAdapter m = new MessageAdapter(mMessageList);
                                                                 m.notifyDataSetChanged();
 
-                                                                Toast.makeText(holder.itemView.getContext(), "Edited", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(holder.itemView.getContext(), "Please get back again to see edited message!", Toast.LENGTH_LONG).show();
 
                                                             } else {
                                                                 Toast.makeText(holder.itemView.getContext(), "Error editing!", Toast.LENGTH_SHORT).show();

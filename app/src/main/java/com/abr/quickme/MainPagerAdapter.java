@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.abr.quickme.fragments.ChatsFragment;
 import com.abr.quickme.fragments.FriendsFragment;
 import com.abr.quickme.fragments.RequestsFragment;
-import com.abr.quickme.fragments.VideoListFragment;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -28,9 +27,9 @@ class MainPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 RequestsFragment requestsFragment = new RequestsFragment();
                 return requestsFragment;
-            case 3:
-                VideoListFragment videochatsfragment = new VideoListFragment();
-                return videochatsfragment;
+//            case 3:
+//                VideoListFragment videochatsfragment = new VideoListFragment();
+//                return videochatsfragment;
             default:
                 ChatsFragment defaultFragment = new ChatsFragment();
                 return defaultFragment;
@@ -40,7 +39,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 
     public CharSequence getPageTitle(int position) {
@@ -51,8 +50,6 @@ class MainPagerAdapter extends FragmentPagerAdapter {
                 return "FRIENDS";
             case 2:
                 return "REQUESTS";
-            case 3:
-                return "VIDEO CALLS";
             default:
                 return "CHATS";
         }

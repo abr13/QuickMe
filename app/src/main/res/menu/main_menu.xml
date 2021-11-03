@@ -2,17 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="Pofile Settings"
-        android:id="@+id/main_accsetting_btn"/>
+        android:id="@+id/main_accsetting_btn"
+        android:title="Pofile Settings" />
     <item
         android:id="@+id/main_settings_btn"
         android:title="App Settings" />
-    <item android:title="All Users"
-        android:id="@+id/main_allusers_btn"/>
+    <item
+        android:id="@+id/main_allusers_btn"
+        android:title="All Users" />
     <item
         android:id="@+id/main_about_btn"
         android:title="About" />
-    <item android:title="Logout"
-        android:id="@+id/main_logout_btn"/>
+    <item
+        android:id="@+id/main_logout_btn"
+        android:title="Logout" />
 
 </menu>

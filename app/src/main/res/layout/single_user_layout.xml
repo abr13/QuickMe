@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/layout_single_name"
         android:layout_alignBottom="@+id/layout_single_image"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="15dp"
         android:text="User's Status"
         android:textSize="14sp" />
@@ -52,8 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_single_name"
         android:layout_alignStart="@+id/layout_single_name"
-        android:layout_marginTop="2dp"
-        android:text="last seen"
+        android:layout_marginTop="1dp"
+        android:text="Last seen"
         android:textSize="14sp" />
 
     <View

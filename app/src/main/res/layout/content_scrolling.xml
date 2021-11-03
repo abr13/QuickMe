@@ -8,6 +8,10 @@
     tools:context=".ScrollingActivity"
     tools:showIn="@layout/activity_scrolling">
 
+    <include
+        android:id="@+id/users_appbar"
+        layout="@layout/app_bar_layout" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

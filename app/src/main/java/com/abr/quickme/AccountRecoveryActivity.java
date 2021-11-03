@@ -28,7 +28,6 @@ public class AccountRecoveryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_recovery);
 
-
         mToolbar = findViewById(R.id.recovery_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Reset Your Password");
@@ -36,7 +35,6 @@ public class AccountRecoveryActivity extends AppCompatActivity {
 
         resetBtn = findViewById(R.id.reset_btn);
         emailText = findViewById(R.id.resetEmail);
-
 
         final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 

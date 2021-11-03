@@ -42,24 +42,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendsFragment extends Fragment {
 
     private RecyclerView mFriendsList;
-
     private DatabaseReference mFriendsDatabase, mUsersDatabase;
     private FirebaseAuth mAuth;
-
     private String mCurrentUserId;
-
     private View mMainView;
 
     public FriendsFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
         mFriendsList = mMainView.findViewById(R.id.friends_list_recycler);
 
@@ -93,7 +88,6 @@ public class FriendsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final friendsViewHolder friendsViewHolder, int i, @NonNull Friends friends) {
 
                 friendsViewHolder.setDate(friends.getDate());
-
                 final String listUserId = getRef(i).getKey();
 
                 mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
@@ -196,7 +190,7 @@ public class FriendsFragment extends Fragment {
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("last seen : " + lastSeenTime);
+                userLastseen.setText("Last seen : " + lastSeenTime);
             }
         }
     }

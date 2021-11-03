@@ -19,8 +19,7 @@
         android:layout_marginEnd="8dp"
         android:background="#18445E"
         android:padding="12dp"
-        android:text="Change Password"
-        android:textColor="#000" />
+        android:text="Change Password" />
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adViewBottomSettings"

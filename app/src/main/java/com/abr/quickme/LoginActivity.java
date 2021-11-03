@@ -17,13 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -72,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog mRegProgress, mRegProgress1, mRegProgress2;
     private GoogleSignInClient mGoogleSignInClient;
     private DatabaseReference mDatabase, UsersRef;
-    private LoginButton facebookSigninBtn;
+    //private LoginButton facebookSigninBtn;
     private AdView mAdViewBottom;
 
     @Override
@@ -97,42 +93,42 @@ public class LoginActivity extends AppCompatActivity {
 
 
         googleSigninBtn = findViewById(R.id.googleSigninBtn);
-        facebookSigninBtn = findViewById(R.id.facebookSigninBtn);
+        //facebookSigninBtn = findViewById(R.id.facebookSigninBtn);
 
         adView();
 
         mCallbackManager = CallbackManager.Factory.create();
         //check login for facebook
 
-        facebookSigninBtn.setReadPermissions("email", "public_profile");
+        //facebookSigninBtn.setReadPermissions("email", "public_profile");
         // If you are using in a fragment, call loginButton.setFragment(this);
 
         // Callback registration
-        facebookSigninBtn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-
-                mRegProgress2.setTitle("Signing with Facebook...");
-                mRegProgress2.setMessage("Your coffee is getting ready !");
-                mRegProgress2.setCanceledOnTouchOutside(false);
-                mRegProgress2.show();
-
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-                // ...
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                // ...
-            }
-        });
+//        facebookSigninBtn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+//
+//                mRegProgress2.setTitle("Signing with Facebook...");
+//                mRegProgress2.setMessage("Your coffee is getting ready !");
+//                mRegProgress2.setCanceledOnTouchOutside(false);
+//                mRegProgress2.show();
+//
+//                handleFacebookAccessToken(loginResult.getAccessToken());
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                Log.d(TAG, "facebook:onCancel");
+//                // ...
+//            }
+//
+//            @Override
+//            public void onError(FacebookException error) {
+//                Log.d(TAG, "facebook:onError", error);
+//                // ...
+//            }
+//        });
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

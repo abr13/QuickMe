@@ -10,17 +10,6 @@
         android:id="@+id/settings_toolbar"
         layout="@layout/app_bar_layout" />
 
-
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adViewBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-5373396645522636/5989749854" />
-
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/settings_profile_image"
         android:layout_width="170dp"
@@ -71,8 +60,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="190dp"
         android:padding="10dp"
-        android:text="Change Profile Picture"
-        android:textColor="#000" />
+        android:text="Change Profile Picture" />
 
     <Button
         android:id="@+id/btn_status_settings"
@@ -82,8 +70,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="130dp"
         android:padding="10dp"
-        android:text="Change Status"
-        android:textColor="#000" />
+        android:text="Change Status" />
 
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5373396645522636/5989749854" />
 
 </RelativeLayout>

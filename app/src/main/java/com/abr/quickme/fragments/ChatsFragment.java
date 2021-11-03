@@ -45,14 +45,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatsFragment extends Fragment {
 
     private RecyclerView mChatsList;
-
     private DatabaseReference mChatsDatabase, mUsersDatabase, mFriendDatabase;
     private FirebaseAuth mAuth;
-
     private String mCurrentUserId;
-
     private View mMainView;
-
     private String thelastMessage;
     private DatabaseReference mUserDatabase;
 
@@ -60,14 +56,10 @@ public class ChatsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        //online
-
 
         mMainView = inflater.inflate(R.layout.fragment_chats, container, false);
         mChatsList = mMainView.findViewById(R.id.chats_list_recycler);
@@ -244,7 +236,6 @@ public class ChatsFragment extends Fragment {
             layout_last_message = mView.findViewById(R.id.layout_single_status);
             layout_last_message.setEnabled(false);
             layout_last_message.setVisibility(View.INVISIBLE);
-
         }
 
         void setName(String name) {
@@ -272,10 +263,8 @@ public class ChatsFragment extends Fragment {
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("last seen : " + lastSeenTime);
+                userLastseen.setText("Last seen : " + lastSeenTime);
             }
         }
-
-
     }
 }

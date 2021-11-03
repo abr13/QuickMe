@@ -28,6 +28,5 @@ public class ImageViewActivity extends AppCompatActivity {
         fullScreenImage = findViewById(R.id.fullScreenImage);
 
         Picasso.get().load(image).placeholder(R.drawable.profile_sample).into(fullScreenImage);
-
     }
 }

@@ -107,24 +107,12 @@ public class ProfileSettingsActivity extends AppCompatActivity {
             }
         });
 
-        //show full screen image
-//        final ImagePopup imagePopup = new ImagePopup(this);
-//        imagePopup.setWindowHeight(800); // Optional
-//        imagePopup.setWindowWidth(800); // Optional
-//        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
-//        imagePopup.setFullScreen(true); // Optional
-//        imagePopup.setHideCloseIcon(true);  // Optional
-//        imagePopup.setImageOnClickClose(true);// Optional
-
         mDislplayImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                imagePopup.initiatePopup(mDislplayImage.getDrawable());
-//                imagePopup.viewPopup();
                 Intent imageIntent = new Intent(ProfileSettingsActivity.this, ImageViewActivity.class);
                 imageIntent.putExtra("image", image);
                 startActivity(imageIntent);
-
             }
         });
     }

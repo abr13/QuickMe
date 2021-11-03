@@ -64,7 +64,6 @@ public class RegisterActivity extends AppCompatActivity {
         textEmail.getEditText().addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
 
-
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -136,6 +135,9 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         mRegProgress.dismiss();
+                                        textName.getEditText().setText("");
+                                        textEmail.getEditText().setText("");
+                                        textPassword.getEditText().setText("");
                                         Toast.makeText(RegisterActivity.this, "Login Now", Toast.LENGTH_LONG).show();
 //setting device token after registration(fix this)
 //                                        String currentUserId = mAuth.getCurrentUser().getUid();

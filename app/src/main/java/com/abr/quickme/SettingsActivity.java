@@ -16,11 +16,9 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 
 public class SettingsActivity extends AppCompatActivity {
 
-
     Toolbar mToolbar;
     Button btnChangePasswordPage;
     private AdView mAdViewBottom;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

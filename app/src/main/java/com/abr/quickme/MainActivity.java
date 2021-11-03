@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             sentToStart();
         }
 
-
         Toolbar mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Quick Me");
