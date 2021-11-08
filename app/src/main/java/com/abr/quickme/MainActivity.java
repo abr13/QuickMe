@@ -105,12 +105,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.main_logout_btn) {
             //logout
-
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
                 mUserOnline.child("online").setValue(ServerValue.TIMESTAMP);
             }
-
             mAuth.signOut();
             sentToStart();
         } else if (item.getItemId() == R.id.main_accsetting_btn) {
@@ -127,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.main_about_btn) {
             //about page
-            Intent settingsIntent = new Intent(MainActivity.this, ScrollingActivity.class);
-            startActivity(settingsIntent);
+            Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(aboutIntent);
 
         }
         return true;

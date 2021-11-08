@@ -9,6 +9,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
@@ -16,75 +18,32 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.InstallState;
 import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.android.play.core.tasks.Task;
+import com.google.android.play.core.tasks.OnSuccessListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StartActivity extends AppCompatActivity {
 
+    private static final int RC_APP_UPDATE = 347;
     MaterialButton btn_create, btn_login;
     CircleImageView logo;
     TextView tagLine;
 
-    private static final int FLEXIBLE_APP_UPDATE_REQ_CODE = 123;
+    //in-app update
     private AppUpdateManager appUpdateManager;
-    private InstallStateUpdatedListener installStateUpdatedListener;
-
-    private void checkUpdate() {
-        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-
-        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                startUpdateFlow(appUpdateInfo);
-            } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                popupSnackBarForCompleteUpdate();
-            }
-        });
-    }
-
-    private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
-        try {
-            appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE, this, FLEXIBLE_APP_UPDATE_REQ_CODE);
-        } catch (IntentSender.SendIntentException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == FLEXIBLE_APP_UPDATE_REQ_CODE) {
-            if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Update canceled by user! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-            } else if (resultCode == RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "Update success! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Update Failed! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-                checkUpdate();
+    private final InstallStateUpdatedListener installStateUpdatedListener = new InstallStateUpdatedListener() {
+        @Override
+        public void onStateUpdate(@NonNull InstallState state) {
+            if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                showCompletedUpdate();
             }
         }
-    }
-
-    private void popupSnackBarForCompleteUpdate() {
-        Snackbar.make(findViewById(android.R.id.content).getRootView(), "New app is ready!", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Install", view -> {
-                    if (appUpdateManager != null) {
-                        appUpdateManager.completeUpdate();
-                    }
-                })
-                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
-                .show();
-    }
-
-    private void removeInstallStateUpdateListener() {
-        if (appUpdateManager != null) {
-            appUpdateManager.unregisterListener(installStateUpdatedListener);
-        }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,22 +55,29 @@ public class StartActivity extends AppCompatActivity {
         logo = findViewById(R.id.logo);
         tagLine = findViewById(R.id.tagLine);
 
-        //update instance
-        appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-        installStateUpdatedListener = state -> {
-            if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                popupSnackBarForCompleteUpdate();
-            } else if (state.installStatus() == InstallStatus.INSTALLED) {
-                removeInstallStateUpdateListener();
-            } else {
-                Toast.makeText(getApplicationContext(), "InstallStateUpdatedListener: state: " + state.installStatus(), Toast.LENGTH_LONG).show();
+        //in-app update
+        appUpdateManager = AppUpdateManagerFactory.create(this);
+        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
+            @Override
+            public void onSuccess(AppUpdateInfo result) {
+                if (result.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                        && result.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                    try {
+                        appUpdateManager.startUpdateFlowForResult(result, AppUpdateType.FLEXIBLE, StartActivity.this
+                                , RC_APP_UPDATE);
+
+                    } catch (IntentSender.SendIntentException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        };
+        });
+        appUpdateManager.registerListener(installStateUpdatedListener);
 
         //start animation
-        Animation myanim = AnimationUtils.loadAnimation(this, R.anim.start_transition);
-        logo.startAnimation(myanim);
-        tagLine.startAnimation(myanim);
+        Animation splashAnime = AnimationUtils.loadAnimation(this, R.anim.start_transition);
+        logo.startAnimation(splashAnime);
+        tagLine.startAnimation(splashAnime);
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,5 +94,35 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(logIntent);
             }
         });
+    }
+
+    //in-app update
+    private void showCompletedUpdate() {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "New app is ready!",
+                Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Install", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                appUpdateManager.completeUpdate();
+            }
+        });
+        snackbar.show();
+    }
+
+    @Override
+    protected void onStop() {
+        //in-app update
+        if (appUpdateManager != null)
+            appUpdateManager.unregisterListener(installStateUpdatedListener);
+        super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //in-app update
+        if (requestCode == RC_APP_UPDATE && resultCode != RESULT_OK) {
+            Toast.makeText(this, "Cancel", Toast.LENGTH_SHORT).show();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

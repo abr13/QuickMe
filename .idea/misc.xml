@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/ABR/AndroidStudioProjects/QuickMe/app/src/main/res/layout/activity_about.xml" value="0.25" />
         <entry key="..\:/ABR/AndroidStudioProjects/QuickMe/app/src/main/res/layout/activity_account_recovery.xml" value="0.25" />
         <entry key="..\:/ABR/AndroidStudioProjects/QuickMe/app/src/main/res/layout/activity_change_password.xml" value="0.25" />
         <entry key="..\:/ABR/AndroidStudioProjects/QuickMe/app/src/main/res/layout/activity_image_view.xml" value="0.15416666666666667" />
