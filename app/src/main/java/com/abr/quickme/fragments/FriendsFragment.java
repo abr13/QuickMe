@@ -42,24 +42,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendsFragment extends Fragment {
 
     private RecyclerView mFriendsList;
-
     private DatabaseReference mFriendsDatabase, mUsersDatabase;
     private FirebaseAuth mAuth;
-
     private String mCurrentUserId;
-
     private View mMainView;
 
     public FriendsFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
         mFriendsList = mMainView.findViewById(R.id.friends_list_recycler);
 
@@ -93,7 +88,6 @@ public class FriendsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final friendsViewHolder friendsViewHolder, int i, @NonNull Friends friends) {
 
                 friendsViewHolder.setDate(friends.getDate());
-
                 final String listUserId = getRef(i).getKey();
 
                 mUsersDatabase.child(listUserId).addValueEventListener(new ValueEventListener() {
@@ -113,7 +107,7 @@ public class FriendsFragment extends Fragment {
                         friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                CharSequence options[] = new CharSequence[]{"Open Profile", "Send Message"};
+                                CharSequence[] options = new CharSequence[]{"Open Profile", "Send Message"};
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Perform Task");
                                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -157,7 +151,7 @@ public class FriendsFragment extends Fragment {
         firebaseRecyclerAdapter.startListening();
     }
 
-    public static class friendsViewHolder extends RecyclerView.ViewHolder {
+    static class friendsViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
         friendsViewHolder(View itemView) {
@@ -192,11 +186,11 @@ public class FriendsFragment extends Fragment {
 
                 long lastTime = Long.parseLong(online_status);
 
-                String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, context);
+                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, context);
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("last seen : " + lastSeenTime);
+                userLastseen.setText("Last seen : " + lastSeenTime);
             }
         }
     }

@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewBottomProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5373396645522636/5989749854" />
 
     <ImageView
         android:id="@+id/profileImageView"
@@ -63,11 +71,10 @@
         android:layout_above="@+id/profileDeclineRequest_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center_horizontal"
         android:padding="12dp"
-        android:text="Send Request"
-        android:textColor="#000" />
+        android:text="Send Request" />
 
     <Button
         android:id="@+id/profileDeclineRequest_button"
@@ -79,6 +86,5 @@
         android:layout_marginBottom="80dp"
         android:gravity="center_horizontal"
         android:padding="12dp"
-        android:text="Decline friend request"
-        android:textColor="#000" />
+        android:text="Decline friend request" />
 </RelativeLayout>

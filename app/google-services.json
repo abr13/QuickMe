@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "277838704780-8rb276erlq8gj39e9qdmmtufg5le4773.apps.googleusercontent.com",
+          "client_id": "277838704780-nv5e310gn21peagpb96ijd22iit9q5ec.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.abr.quickme",
-            "certificate_hash": "5b1720440ae665d2de17d63c08c8ead66574dff3"
+            "certificate_hash": "90cbbf565658241d3cca19dd23d9aa2919cf0e1b"
           }
         },
         {

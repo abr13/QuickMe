@@ -51,7 +51,6 @@ public class RequestsFragment extends Fragment {
     private String mCurrentUserId;
     private View mMainView;
     private DatabaseReference mFriendRequestDatabase, mFriendDatabase, getTypeRef;
-
     private String image;
 
     public RequestsFragment() {
@@ -82,7 +81,6 @@ public class RequestsFragment extends Fragment {
         mFriendReqsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return mMainView;
-
     }
 
     @Override
@@ -187,10 +185,8 @@ public class RequestsFragment extends Fragment {
                                                                                                                 });
                                                                                                     }
                                                                                                 });
-
                                                                                     }
                                                                                 });
-
                                                                     }
                                                                 });
                                                     }
@@ -268,7 +264,6 @@ public class RequestsFragment extends Fragment {
                                             }
                                         });
                                     }
-
                                 }
                             }
 
@@ -287,10 +282,8 @@ public class RequestsFragment extends Fragment {
                         return holder;
                     }
                 };
-
         mFriendReqsList.setAdapter(adapter);
         adapter.startListening();
-
     }
 
 
@@ -308,7 +301,6 @@ public class RequestsFragment extends Fragment {
             reqType = itemView.findViewById(R.id.req_type);
             reqAcceptBtn = itemView.findViewById(R.id.req_accept_btn);
             reqDeclineBtn = itemView.findViewById(R.id.req_decline_btn);
-
         }
     }
 }

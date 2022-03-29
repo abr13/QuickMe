@@ -6,7 +6,6 @@
     android:orientation="vertical"
     tools:context=".AccountRecoveryActivity">
 
-
     <include
         android:id="@+id/recovery_toolbar"
         layout="@layout/app_bar_layout" />
@@ -14,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/login_toolbar"
+        android:layout_below="@+id/recovery_toolbar"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
@@ -22,15 +21,15 @@
         android:layout_marginEnd="0dp"
         android:orientation="vertical"
         android:paddingLeft="24dp"
-        android:paddingTop="56dp"
+        android:paddingTop="20dp"
         android:paddingRight="24dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/resetEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp">
 
             <EditText
                 android:layout_width="match_parent"
@@ -43,11 +42,10 @@
             android:id="@+id/reset_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:text="Send Password Reset email"
-            android:textColor="#000" />
+            android:text="Send Password Reset email" />
 
     </LinearLayout>
 

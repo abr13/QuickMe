@@ -45,25 +45,22 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatsFragment extends Fragment {
 
     private RecyclerView mChatsList;
-
-    private DatabaseReference mChatsDatabase, mUsersDatabase;
+    private DatabaseReference mChatsDatabase, mUsersDatabase, mFriendDatabase;
     private FirebaseAuth mAuth;
-
     private String mCurrentUserId;
-
     private View mMainView;
-
     private String thelastMessage;
+    private DatabaseReference mUserDatabase;
 
     public ChatsFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         mMainView = inflater.inflate(R.layout.fragment_chats, container, false);
         mChatsList = mMainView.findViewById(R.id.chats_list_recycler);
 
@@ -82,6 +79,7 @@ public class ChatsFragment extends Fragment {
 
         return mMainView;
     }
+
 
     @Override
     public void onStart() {
@@ -129,7 +127,7 @@ public class ChatsFragment extends Fragment {
                         chatsViewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View v) {
-                                CharSequence[] options = new CharSequence[]{"Delete Chat"};
+                                CharSequence[] options = new CharSequence[]{"Delete Chat with Messages\nyou can't revert it back."};
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Chat option");
                                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -152,7 +150,7 @@ public class ChatsFragment extends Fragment {
                                                                                     mRootRef.child("Chat").child(mCurrentUserId).child(listUserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void aVoid) {
-                                                                                            Toast.makeText(getContext(), "All messages and chat deleted!", Toast.LENGTH_SHORT).show();
+                                                                                            Toast.makeText(getContext(), "All Messages and Chat Deleted!", Toast.LENGTH_SHORT).show();
                                                                                         }
                                                                                     });
                                                                                 }
@@ -238,7 +236,6 @@ public class ChatsFragment extends Fragment {
             layout_last_message = mView.findViewById(R.id.layout_single_status);
             layout_last_message.setEnabled(false);
             layout_last_message.setVisibility(View.INVISIBLE);
-
         }
 
         void setName(String name) {
@@ -262,11 +259,11 @@ public class ChatsFragment extends Fragment {
 
                 long lastTime = Long.parseLong(online_status);
 
-                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime, context);
+                String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime - 1000, context);
 
                 userOnlineView.setVisibility(View.INVISIBLE);
                 userLastseen.setVisibility(View.VISIBLE);
-                userLastseen.setText("last seen : " + lastSeenTime);
+                userLastseen.setText("Last seen : " + lastSeenTime);
             }
         }
     }

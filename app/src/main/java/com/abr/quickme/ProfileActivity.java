@@ -20,6 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +56,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String current_state;
     private String image;
+
+    private AdView mAdViewBottom;
 
     private DatabaseReference mUsersDatabase, mFriendRequestDatabase, mFriendDatabase, mNotificationDatabase;
 
@@ -92,6 +99,19 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    //show ad
+    private void adView() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdViewBottom = findViewById(R.id.adViewBottomProfile);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBottom.loadAd(adRequest);
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -123,6 +143,8 @@ public class ProfileActivity extends AppCompatActivity {
         mRequestDeclineButton.setVisibility(View.INVISIBLE);
         mRequestDeclineButton.setEnabled(false);
 
+        adView();
+
         current_state = "not_friends";
 
         mProgressdialog = new ProgressDialog(this);
@@ -130,6 +152,7 @@ public class ProfileActivity extends AppCompatActivity {
         mProgressdialog.setMessage("Want to have candle light dinner with your friend?");
         mProgressdialog.setCanceledOnTouchOutside(false);
         mProgressdialog.show();
+
 
         //show full screen image
         final ImagePopup imagePopup = new ImagePopup(this);
@@ -395,10 +418,39 @@ public class ProfileActivity extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    mProfileSendRequestButton.setEnabled(true);
-                                                    current_state = "not_friends";
-                                                    mProfileSendRequestButton.setText("Send Friend Request");
-                                                    Toast.makeText(ProfileActivity.this, "Un Friend Done, you're rud!", Toast.LENGTH_LONG).show();
+
+                                                    final DatabaseReference mRootRef;
+                                                    mRootRef = FirebaseDatabase.getInstance().getReference();
+                                                    mRootRef.child("Messages").child(mCurrentUser.getUid()).child(selected_user_id).removeValue()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    mRootRef.child("Messages").child(selected_user_id).child(mCurrentUser.getUid()).removeValue()
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    mRootRef.child("Chat").child(mCurrentUser.getUid()).child(selected_user_id).removeValue()
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                    mRootRef.child("Chat").child(selected_user_id).child(mCurrentUser.getUid()).removeValue()
+                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                                    mProfileSendRequestButton.setEnabled(true);
+                                                                                                                    current_state = "not_friends";
+                                                                                                                    mProfileSendRequestButton.setText("Send Friend Request");
+                                                                                                                    Toast.makeText(ProfileActivity.this, "Un Friend Done, you're rud!", Toast.LENGTH_LONG).show();
+                                                                                                                }
+                                                                                                            });
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            });
+                                                                }
+                                                            });
+
+
                                                 }
                                             });
                                 }
@@ -409,3 +461,4 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 }
+

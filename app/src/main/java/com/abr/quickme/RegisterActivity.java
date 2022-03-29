@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,14 +30,15 @@ import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    Button btn_register;
+    TextInputLayout textName, textEmail, textPassword;
+    TextView alreadyAccount;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
-    private Button btn_register;
-    private TextInputLayout textName, textEmail, textPassword;
     private DatabaseReference mDatabase;
     private ProgressDialog mRegProgress;
-    private TextView alreadyAccount;
     private String email;
+    private DatabaseReference UsersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         textEmail.getEditText().addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-
 
             }
 
@@ -133,19 +135,40 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         mRegProgress.dismiss();
-                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(mainIntent);
-                                        finish();
+                                        textName.getEditText().setText("");
+                                        textEmail.getEditText().setText("");
+                                        textPassword.getEditText().setText("");
+                                        Toast.makeText(RegisterActivity.this, "Login Now", Toast.LENGTH_LONG).show();
+//setting device token after registration(fix this)
+//                                        String currentUserId = mAuth.getCurrentUser().getUid();
+//                                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+//
+//                                        UsersRef.child(currentUserId).child("device_token")
+//                                                .setValue(deviceToken)
+//                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                    @Override
+//                                                    public void onComplete(@NonNull Task<Void> task) {
+//                                                        if (task.isSuccessful()) {
+//                                                            Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+//                                                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                                            startActivity(mainIntent);
+//                                                            finish();
+//
+//                                                        }
+//                                                    }
+//                                                });
+
+
                                     }
                                 }
                             });
 
                         } else {
-                            // If sign in fails, display a message to the user.
+                            // If register fails, display a message to the user.
                             mRegProgress.hide();
                             Snackbar snackbar_su = Snackbar.make(v, "Something is wrong!", Snackbar.LENGTH_LONG);
                             snackbar_su.show();
+                            Log.d("TAG", "onComplete: ");
                         }
                         // ...
                     }

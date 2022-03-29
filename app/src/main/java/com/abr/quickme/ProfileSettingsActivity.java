@@ -14,6 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,6 +62,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     private Button btn_statusSettings, btn_changeImage;
     private String ImgURL, ThumbURL;
     private String image;
+    private AdView mAdViewBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +82,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         mStatus = findViewById(R.id.settings_Status);
 
         fetchProfile();
+        adView();
 
         btn_changeImage = findViewById(R.id.btn_changeImage);
         btn_changeImage.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +90,8 @@ public class ProfileSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setMaxCropResultSize(1500, 1500)
+                        .setMaxCropResultSize(2000, 2000)
+                        .setAllowCounterRotation(true)
                         .start(ProfileSettingsActivity.this);
             }
         });
@@ -99,30 +107,32 @@ public class ProfileSettingsActivity extends AppCompatActivity {
             }
         });
 
-        //show full screen image
-//        final ImagePopup imagePopup = new ImagePopup(this);
-//        imagePopup.setWindowHeight(800); // Optional
-//        imagePopup.setWindowWidth(800); // Optional
-//        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
-//        imagePopup.setFullScreen(true); // Optional
-//        imagePopup.setHideCloseIcon(true);  // Optional
-//        imagePopup.setImageOnClickClose(true);// Optional
-
         mDislplayImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                imagePopup.initiatePopup(mDislplayImage.getDrawable());
-//                imagePopup.viewPopup();
                 Intent imageIntent = new Intent(ProfileSettingsActivity.this, ImageViewActivity.class);
                 imageIntent.putExtra("image", image);
                 startActivity(imageIntent);
-
             }
         });
     }
 
+    //show ad
+    private void adView() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdViewBottom = findViewById(R.id.adViewBottom);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBottom.loadAd(adRequest);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {

@@ -16,6 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.abr.quickme.models.Users;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,6 +35,7 @@ public class UsersActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private DatabaseReference mUsersDatabase, mUserOnline;
     private FirebaseAuth mAuth;
+    private AdView mAdViewBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,21 @@ public class UsersActivity extends AppCompatActivity {
 
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
+
+        adView();
+    }
+
+    //show ad
+    private void adView() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        mAdViewBottom = findViewById(R.id.adViewBottomUsers);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBottom.loadAd(adRequest);
     }
 
     @Override
@@ -62,7 +83,6 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
 
         FirebaseRecyclerOptions<Users> options =
                 new FirebaseRecyclerOptions.Builder<Users>()
@@ -85,7 +105,6 @@ public class UsersActivity extends AppCompatActivity {
                         startActivity(profileIntent);
                     }
                 });
-
             }
 
             @NonNull

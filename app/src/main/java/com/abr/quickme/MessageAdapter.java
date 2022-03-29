@@ -1,7 +1,10 @@
 package com.abr.quickme;
 
+import static com.abr.quickme.ChatActivity.getAlphaNumericString;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abr.quickme.models.Messages;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,13 +31,11 @@ import com.squareup.picasso.Picasso;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-import static com.abr.quickme.ChatActivity.getAlphaNumericString;
-
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
     private static final int MSG_TYPE_LEFT = 0;
     private static final int MSG_TYPE_RIGHT = 1;
-    private List<Messages> mMessageList;
+    private final List<Messages> mMessageList;
     private FirebaseUser Cuser;
 
     MessageAdapter(List<Messages> mMessageList) {
@@ -64,6 +66,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.time_text_image.setVisibility(View.GONE);
         holder.messageImage.setVisibility(View.GONE);
 
+        //show message image in fullscreen
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMessageList.get(position).getType().equals("image")) {
+                    final ImagePopup imagePopup = new ImagePopup(holder.itemView.getContext());
+                    imagePopup.setWindowHeight(800); // Optional
+                    imagePopup.setWindowWidth(800); // Optional
+                    imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+                    imagePopup.setFullScreen(true); // Optional
+                    imagePopup.setHideCloseIcon(true);  // Optional
+                    imagePopup.setImageOnClickClose(true);// Optional
+                    imagePopup.initiatePopup(holder.messageImage.getDrawable());
+                    imagePopup.viewPopup();
+                }
+            }
+        });
+
         final Messages message = mMessageList.get(position);
         final String from_user = message.getFrom();
         final String message_type = message.getType();
@@ -80,6 +100,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             }
+//alert notification required when app is in background
+//            Alerter.create(holder.itemView.getContext())
+//                    .setTitle("title")
+//                    .setText("message")
+//                    .show();
+
 
             holder.messageText.setText(messageAfterDecrypt);
             holder.timeText.setText(message.getTime());
@@ -90,7 +116,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             Picasso.get().load(message.getMessage()).placeholder(R.drawable.profile_sample).into(holder.messageImage);
             holder.time_text_image.setText(message.getTime());
         }
-
 
         if (from_user.equals(Cuser.getUid())) {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -104,21 +129,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
-                                    //Edit message
+                                    //Edit for all
                                     editMessage(position, holder);
-
-
                                 } else if (which == 1) {
                                     //Delete for all
                                     deleteMessageForAll(position, holder);
-
-
                                 }
                                 if (which == 2) {
                                     //Delete for me
                                     deleteSentMessage(position, holder);
-
-
                                 }
 
                             }
@@ -299,7 +318,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                                                             if (task.isSuccessful()) {
                                                                 MessageAdapter m = new MessageAdapter(mMessageList);
                                                                 m.notifyDataSetChanged();
-                                                                Toast.makeText(holder.itemView.getContext(), "Edited", Toast.LENGTH_SHORT).show();
+
+                                                                Toast.makeText(holder.itemView.getContext(), "Please get back again to see edited message!", Toast.LENGTH_LONG).show();
 
                                                             } else {
                                                                 Toast.makeText(holder.itemView.getContext(), "Error editing!", Toast.LENGTH_SHORT).show();
@@ -326,6 +346,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         });
 
         alert.show();
+
+    }
+
+    public void alert(String title, String message) {
 
     }
 

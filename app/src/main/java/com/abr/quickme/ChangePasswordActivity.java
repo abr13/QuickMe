@@ -2,10 +2,12 @@ package com.abr.quickme;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,14 +21,19 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-
     MaterialButton changePasswordBtn;
     TextInputLayout oldPasswordText, newPasswordText, cNewPasswordText;
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
+
+        mToolbar = findViewById(R.id.changePassword_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Change Your Password");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         changePasswordBtn = findViewById(R.id.btn_ChangePassword);
         oldPasswordText = findViewById(R.id.textCurrentPassword);
@@ -80,42 +87,15 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//

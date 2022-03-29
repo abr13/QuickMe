@@ -9,6 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         TabLayout mTabLayout = findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
+        adView();
+
         mAuth = FirebaseAuth.getInstance();
         try {
             mUserOnline = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
@@ -38,10 +45,22 @@ public class MainActivity extends AppCompatActivity {
             sentToStart();
         }
 
-
         Toolbar mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Quick Me");
+    }
+
+    //show ad
+    private void adView() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        AdView mAdViewBottom = findViewById(R.id.adViewBottomMain);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdViewBottom.loadAd(adRequest);
     }
 
     @Override
@@ -86,12 +105,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.main_logout_btn) {
             //logout
-
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
                 mUserOnline.child("online").setValue(ServerValue.TIMESTAMP);
             }
-
             mAuth.signOut();
             sentToStart();
         } else if (item.getItemId() == R.id.main_accsetting_btn) {
@@ -108,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(settingsIntent);
         } else if (item.getItemId() == R.id.main_about_btn) {
             //about page
+            Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(aboutIntent);
 
         }
         return true;
