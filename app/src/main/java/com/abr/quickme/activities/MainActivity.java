@@ -124,12 +124,13 @@ public class MainActivity extends AppCompatActivity {
             //Open Account/App Settings
             Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(settingsIntent);
-        } else if (item.getItemId() == R.id.main_about_btn) {
-            //about page
-            Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(aboutIntent);
-
         }
+//        else if (item.getItemId() == R.id.main_about_btn) {
+//            //about page
+//            Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+//            startActivity(aboutIntent);
+//
+//        }
         return true;
     }
 }

@@ -90,7 +90,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         final String message_type = message.getType();
 
         if (message_type.equals("text")) {
-            Toast.makeText(holder.itemView.getContext(), "here", Toast.LENGTH_LONG).show();
             holder.messageText.setVisibility(View.VISIBLE);
             holder.timeText.setVisibility(View.VISIBLE);
             //Decrypt Message Here

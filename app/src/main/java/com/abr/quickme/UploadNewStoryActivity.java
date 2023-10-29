@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fxn.pix.Options;
-import com.fxn.pix.Pix;
+//import com.fxn.pix.Options;
+//import com.fxn.pix.Pix;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -88,7 +88,7 @@ public class UploadNewStoryActivity extends AppCompatActivity {
 
         UploadStatus(mCurrentUser);//open camera/gallery to pic image for status
 
-        Pix.start(UploadNewStoryActivity.this, Options.init().setRequestCode(100));
+//        Pix.start(UploadNewStoryActivity.this, Options.init().setRequestCode(100));
     }
 
 
@@ -98,12 +98,12 @@ public class UploadNewStoryActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
             ArrayList<String> returnValue;
-            returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-            Log.d("U", "onActivityResult: " + returnValue.get(0));
+//            returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+//            Log.d("U", "onActivityResult: " + returnValue.get(0));
 
-            File f = new File(returnValue.get(0));
-            d = new BitmapDrawable(getApplicationContext().getResources(), f.getAbsolutePath()).getBitmap();
-            statusImage.setImageBitmap(d);
+//            File f = new File(returnValue.get(0));
+//            d = new BitmapDrawable(getApplicationContext().getResources(), f.getAbsolutePath()).getBitmap();
+//            statusImage.setImageBitmap(d);
         }
     }
 
