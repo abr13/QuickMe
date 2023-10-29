@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -10,6 +10,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.abr.quickme.R;
 
 public class WebActivity extends AppCompatActivity {
 

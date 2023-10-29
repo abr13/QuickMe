@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#272525"
-    tools:context=".ImageViewActivity">
+    tools:context=".activities.ImageViewActivity">
 
     <include
         android:id="@+id/profile_settings_toolbar"

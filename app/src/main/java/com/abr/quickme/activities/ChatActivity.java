@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
 import static com.abr.quickme.classes.GetTimeAgo.getTimeAgo;
 
@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.abr.quickme.R;
 import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.classes.TelegramBottomPanel;
 import com.abr.quickme.models.Messages;

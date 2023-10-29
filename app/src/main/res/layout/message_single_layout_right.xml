@@ -10,28 +10,32 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/message_text_background_right"
         android:maxEms="20"
         android:minEms="8"
-        android:padding="15dp"
+        android:padding="20dp"
         android:textColor="#000"
         android:textSize="16sp"
+        android:textAlignment="textStart"
         tools:text="message" />
 
     <TextView
         android:id="@+id/time_text"
-        android:layout_width="140dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/message_text"
         android:layout_alignBottom="@+id/message_text"
         android:layout_marginBottom="2dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="15dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="15dp"
         android:textColor="#000"
-        android:textSize="10sp"
+        android:textSize="11sp"
+        android:layout_margin="10dp"
+        android:layout_marginTop="15dp"
+        android:textAlignment="textEnd"
         tools:text="2019/07/15 20:55:35" />
 
     <ImageView
@@ -54,7 +58,7 @@
         android:layout_alignBottom="@id/message_image"
         android:layout_marginBottom="2dp"
         android:textColor="#000"
-        android:textSize="10sp"
+        android:textSize="11sp"
         tools:text="2019/07/15 20:55:35" />
 
 </RelativeLayout>

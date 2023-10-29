@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.abr.quickme.R;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
