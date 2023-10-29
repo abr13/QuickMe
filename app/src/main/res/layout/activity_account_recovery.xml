@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AccountRecoveryActivity">
+    tools:context=".activities.AccountRecoveryActivity">
 
     <include
         android:id="@+id/recovery_toolbar"

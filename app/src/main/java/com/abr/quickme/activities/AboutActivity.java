@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -6,6 +6,8 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.abr.quickme.R;
 
 public class AboutActivity extends AppCompatActivity {
 

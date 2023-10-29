@@ -1,4 +1,4 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;

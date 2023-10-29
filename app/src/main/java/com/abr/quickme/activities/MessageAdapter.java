@@ -1,6 +1,6 @@
-package com.abr.quickme;
+package com.abr.quickme.activities;
 
-import static com.abr.quickme.ChatActivity.getAlphaNumericString;
+import static com.abr.quickme.activities.ChatActivity.getAlphaNumericString;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.abr.quickme.R;
 import com.abr.quickme.models.Messages;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.tasks.OnCompleteListener;

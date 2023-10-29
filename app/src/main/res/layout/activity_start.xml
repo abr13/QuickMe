@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/start_backgroung"
-    tools:context=".StartActivity">
+    tools:context=".activities.StartActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logo"

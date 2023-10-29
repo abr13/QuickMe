@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.abr.quickme.ChatActivity;
+import com.abr.quickme.activities.ChatActivity;
 import com.abr.quickme.R;
 import com.abr.quickme.classes.GetTimeAgo;
 import com.abr.quickme.models.Chats;
